@@ -36,7 +36,18 @@
 
     return $result;
   }
+  function hari($date){
+    date_default_timezone_set('Asia/Makassar');
+    // array hari dan bulan
+    $Hari = array("Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu");
 
+    
+    
+    $hari = date("w",strtotime($date));
+ 
+    $result = $Hari[$hari];
+    return $result;
+  }
 if (!function_exists('tanggal')) {
   function tanggal($date){
     date_default_timezone_set('Asia/Makassar');
@@ -84,7 +95,7 @@ if (!function_exists('fulldate')) {
         $d2 = new DateTime( $beginDate );
         
         $diff = $d2->diff( $d1 );
-        return $diff->d;
+        return $diff->days;
     }
     function title(){
         return "CAMINO COFFEE AND EATERY";

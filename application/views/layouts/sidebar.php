@@ -6,7 +6,7 @@
 								<span>Main</span>
 							</li>
 							<li class="active">
-								<a href="<?= base_url() ?>" class="active"><i class="la la-dashboard"></i> <span> Dashboard</span> </a>
+								<a href="<?= base_url() ?>" ><i class="la la-dashboard"></i> <span> Dashboard</span> </a>
 								
 							</li>
 							
@@ -14,7 +14,7 @@
 								<span>Pegawai</span>
 							</li>
 							<li class="submenu">
-								<a href="#" ><i class="la la-calendar"></i> <span> Absensi</span> <span class="menu-arrow"></span> </a>
+								<a href="#" ><i class="la la-calendar"></i> <span> Kehadiran</span> <span class="menu-arrow"></span> </a>
 								<ul style="display: none;">
 									<li><a href="profile.html"> Absensi </a></li>
 									<li><a href="client-profile.html"> Overtime </a></li>
@@ -25,11 +25,11 @@
 								
 							</li>
 							<li >
-								<a href="#" class="active"><i class="la la-money"></i> <span> Gaji</span> </a>
+								<a href="#" ><i class="la la-money"></i> <span> Gaji</span> </a>
 								
 							</li>
 							<li >
-								<a href="#" class="active"><i class="la la-calendar"></i> <span>Jadwal</span> </a>
+								<a href="<?= base_url('schedule')?>" ><i class="la la-calendar"></i> <span>Jadwal</span> </a>
 								
 							</li>
 							<li class="menu-title"> 

@@ -8,7 +8,7 @@ export default function error(title,msg){
         
           
         customClass: 'swal-wide',
-         icon:'warning',
+         type:'warning',
         
         })  
     }

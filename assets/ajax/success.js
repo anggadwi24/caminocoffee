@@ -6,7 +6,7 @@ export default function success(title,msg){
         
           
         customClass: 'swal-wide',
-         icon:'success',
+         type:'success',
         
         })  
     }
