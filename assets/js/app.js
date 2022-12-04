@@ -143,9 +143,23 @@ $(document).ready(function() {
 				next: 'fa fa-angle-right',
 				previous: 'fa fa-angle-left'
 			}
-		});
-	}
+		})
 	
+	}
+	if($('.timepicker').length > 0) {
+		$('.timepicker').datetimepicker({
+			format: 'hh:mm A',
+
+			icons: {
+				up: "fa fa-angle-up",
+				down: "fa fa-angle-down",
+				next: 'fa fa-angle-right',
+				previous: 'fa fa-angle-left'
+			}
+			
+		})
+	
+	}
 	// Datatable
 
 	if($('.datatable').length > 0) {

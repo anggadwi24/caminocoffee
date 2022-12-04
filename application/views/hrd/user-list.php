@@ -54,7 +54,7 @@
 <tr>
                         <td>
                             <h2 class="table-avatar">
-                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>" class="avatar">
+                                <a href="<?= base_url('user/detail/'.$row->username) ?>" class="avatar">
                                 <?php 
                                     if(file_exists('upload/user/'.$row->photo)){
                                         echo '<img src="'.base_url('upload/user/'.$row->photo).'" alt="'.$row->name.'">';
@@ -64,7 +64,7 @@
                                     }
                                 ?>
                                 </a>
-                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>"><?= $row->name?> <span> <?php 
+                                <a href="<?= base_url('user/detail/'.$row->username) ?>"><?= $row->name?> <span> <?php 
                                 if($row->active == 'y'){ echo "Active"; }else{echo "Suspend";}
                             ?></span></a>
                             </h2>
@@ -80,14 +80,14 @@
                             <div class="dropdown dropdown-action">
                                 <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                                 <div class="dropdown-menu dropdown-menu-right">
-                                    <a class="dropdown-item" href="<?= base_url('pegawai/detail/'.$row->username)?>" ><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                                    <a class="dropdown-item" href="<?= base_url('user/edit/'.$row->username)?>" ><i class="fa fa-pencil m-r-5"></i> Edit</a>
                                     <a class="dropdown-item delete" href="#" data-username="<?=$row->username?>" ><i class="fa fa-trash-o m-r-5"></i> Delete</a>
                                     <?php 
                                         if($row->active == 'y'){
                                     ?>
-                                        <a class="dropdown-item" href="<?= base_url('pegawai/status/'.$row->username)?>" ><i class="fa fa-times m-r-5"></i> Suspend</a>
+                                        <a class="dropdown-item" href="<?= base_url('user/status/'.$row->username)?>" ><i class="fa fa-times m-r-5"></i> Suspend</a>
                                     <?php }else{?>      
-                                        <a class="dropdown-item" href="<?= base_url('pegawai/status/'.$row->username)?>" ><i class="fa fa-check m-r-5"></i> Active</a>
+                                        <a class="dropdown-item" href="<?= base_url('user/status/'.$row->username)?>" ><i class="fa fa-check m-r-5"></i> Active</a>
                                     <?php }?> 
 
                                 </div>
@@ -109,12 +109,12 @@
             <div class="modal-body">
                 <div class="form-header">
                     <h3>Hapus pegawai</h3>
-                    <p>Apakah anda yakin akan menghapus pegawai ini?</p>
+                    <p>Apakah anda yakin akan menghapus hrd ini?</p>
                 </div>
                 <div class="modal-btn delete-action">
                     <div class="row">
                         <div class="col-6">
-                            <form action="<?= base_url('pegawai/delete/')?>" method="POST">
+                            <form action="<?= base_url('user/delete/')?>" method="POST">
                             <input type="hidden" name="username" id="username" >
                             <button class="btn btn-primary continue-btn">Hapus</button>
                             </form>

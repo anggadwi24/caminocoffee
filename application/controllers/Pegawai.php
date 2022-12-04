@@ -100,15 +100,22 @@ class Pegawai extends CI_Controller
 
 		
 	}
-	function detail(){
-		$id = $this->input->get('id');
-		$cek = $this->model_app->view_where('pegawai',array('pegawai_id'=>$id));
+	function detail($username){
+		$cek = $this->model_app->join_where2('pegawai','users','users_id','id',array('username'=>$username));
 		if($cek->num_rows() > 0){
-			$data['title'] = 'DETAIL PEGAWAI - '.title();
-			$data['row'] = $cek->row_array();
-			$this->template->load('template','pegawai_detail',$data);
+			$data['title'] = 'PEGAWAI - '.title();
+			$data['page'] = 'Pegawai';
+			$data['right'] = '';
+			$data['row'] = $cek->row();
+			$data['breadcrumb'] = '<li class="breadcrumb-item"><a href="'.base_url('/').'">Dashboard</a></li>';
+			$data['breadcrumb'] .= '<li class="breadcrumb-item"><a href="'.base_url('pegawai').'">Pegawai</a></li>';
+			$data['breadcrumb'] .= '<li class="breadcrumb-item active">Detail</li>';
+			$data['style'] = ['assets/css/bootstrap-datetimepicker.min.css','assets/css/dataTables.bootstrap4.min.css','assets/css/select2.min.css'];
+			$data['script'] = ['assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap4.min.js','assets/js/select2.min.js'];
+			$this->template->load('template','hrd/pegawai-detail',$data);
+			
 		}else{
-			$this->session->set_flashdata('error',json_encode('Pegawai tidak ditemukan'));
+			$this->session->set_flashdata('error','Pegawai tidak ditemukan');
 			redirect('pegawai');
 		}
 	}
@@ -295,24 +302,6 @@ class Pegawai extends CI_Controller
 		
 		}
 	}
-	function test(){
-	
-			$this->form_validation->set_rules('name','Nama ','required');
-			$this->form_validation->set_rules('gender','Jenis Kelamin ','required');
-			$this->form_validation->set_rules('telp','No. Telp ','required');
-			$this->form_validation->set_rules('email','Email ','required');
-			$this->form_validation->set_rules('divisi','Divisi ','required');
 
-
-			if($this->form_validation->run() === false){
-					$msg = 'asdasdasd';
-					$this->session->set_flashdata('error',$msg);
-					redirect('pegawai');
-			}else{
-					echo "asd";
-			}
-			
-		
-	}
 }
 

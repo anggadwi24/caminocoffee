@@ -38,13 +38,13 @@
 							</li>
 							
 							<li> 
-								<a href="clients.html"><i class="la la-users"></i> <span>HRD</span></a>
+								<a href="<?= base_url('user')?>"><i class="la la-users"></i> <span>HRD</span></a>
 							</li>
 							<li class="menu-title">
 								<span>Konfigurasi</span>
 							</li>
 							<li >
-								<a href="#"><i class="la la-calendar"></i> <span> Shift</span> </a>
+								<a href="<?= base_url('shift')?>"><i class="la la-calendar"></i> <span> Shift</span> </a>
 								
 							</li>
 							

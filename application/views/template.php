@@ -63,11 +63,11 @@
         
         ?>
         <script>
-            var msg = <?= $this->session->flashdata('error') ?>;
+         
             swal(
                 {
                     title: 'Ooppss..',
-                    text: msg,
+                    text: '<?= $this->session->flashdata('error') ?>',
                     type: 'warning',
                     
                 }
@@ -98,6 +98,15 @@
                 if(count($script) > 0){
                     for($a=0;$a<count($script);$a++){
                         echo '<script  src="'.base_url($script[$a]).'"></script>';
+                    }
+                }
+            }
+        ?>
+         <?php 
+            if(isset($ajax)){
+                if(count($ajax) > 0){
+                    for($a=0;$a<count($ajax);$a++){
+                        echo '<script  src="'.base_url($ajax[$a]).'" type="module"></script>';
                     }
                 }
             }

@@ -9,233 +9,299 @@ class User extends CI_Controller
     	if($this->session->userdata('isLog')){
 			$this->id = $this->session->userdata['isLog']['id'];
 			$this->role = $this->session->userdata['isLog']['role'];
-			if($this->role =='admin' OR $this->role == 'camat'){
-
-			}else{
-				redirect('');
+			if($this->role != 'hrd'){
+				$this->session->set_flashdata('error','Anda tidak bisa mengakses halaman ini');
+				redirect('/');
 			}
 		}else{
 			redirect('auth');
 		}	
 	}
 	public function index()
-	{
-		$data['title'] = 'USER - '.title();
-		$data['pegawai'] = $this->model_app->view_order('pegawai','pegawai_name','ASC');
-		$data['record'] = $this->model_app->view_order('users','users_id','DESC');
-		$this->template->load('template','user',$data);
+	{	
+		$type = $this->input->get('type');
+		$data['title'] = 'HRD - '.title();
+		$data['page'] = 'HRD';
+		if($type == null OR $type =='grid'){
+			$gridActive = 'active';
+			$listActive = '';
+			$data['type'] = 'grid';
+
+		}else{
+			$gridActive = '';
+			$listActive = 'active';
+			$data['type'] = 'list';
+		}
+		$data['right'] = ' <a href="'.base_url('user/add').'" class="btn add-btn" ><i class="fa fa-plus"></i> Tambah HRD</a>
+							<div class="view-icons">
+								<a href="'.base_url('user?type=grid').'" class="grid-view btn btn-link  '.$gridActive.'"><i class="fa fa-th"></i></a>
+								<a href="'.base_url('user?type=list').'" class="list-view btn btn-link '.$listActive.'"><i class="fa fa-bars"></i></a>
+							</div>';
+		$data['breadcrumb'] = '<li class="breadcrumb-item"><a href="'.base_url('/').'">Dashboard</a></li>';
+		$data['breadcrumb'] .= '<li class="breadcrumb-item active">HRD</li>';
+		$data['style'] = ['assets/css/bootstrap-datetimepicker.min.css','assets/css/dataTables.bootstrap4.min.css','assets/css/select2.min.css'];
+		$data['script'] = ['assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap4.min.js','assets/js/select2.min.js'];
+		$keyword = $this->input->get('keyword');
+		if(isset($keyword)){
+			$data['record'] = $this->model_app->join_like_order2('hrd','users','users_id','id',array('name'=>$keyword),'hrd.id','desc');
+			$data['keyword'] = $keyword;
+		}else{
+			$data['record'] = $this->model_app->join_order2('hrd','users','users_id','id','hrd.id','desc');
+			$data['keyword'] = '';
+
+		}
+		if($type == 'grid' OR $type == null){
+			$this->template->load('template','hrd/user',$data);
+		}else{
+			$this->template->load('template','hrd/user-list',$data);
+		}
+	
+		
+
 	}
+	public function add(){
+		$data['title'] = 'HRD - '.title();
+		$data['page'] = 'HRD';
+		$data['right'] = '';
+		$data['breadcrumb'] = '<li class="breadcrumb-item"><a href="'.base_url('/').'">Dashboard</a></li>';
+		$data['breadcrumb'] .= '<li class="breadcrumb-item"><a href="'.base_url('user').'">HRD</a></li>';
+		$data['breadcrumb'] .= '<li class="breadcrumb-item active">Tambah</li>';
+		$data['style'] = ['assets/css/bootstrap-datetimepicker.min.css','assets/css/dataTables.bootstrap4.min.css','assets/css/select2.min.css'];
+		$data['script'] = ['assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap4.min.js','assets/js/select2.min.js'];
+		$this->template->load('template','hrd/user-add',$data);
+	}
+	function status(){
+		if($this->input->method() == 'get'){
+			$username = $this->uri->segment(3);
+			$cek = $this->model_app->view_where('users',array('username'=>$username));
+			if($cek->num_rows() > 0){
+				$row = $cek->row();
+				if($row->active == 'y'){
+					$act ='n';
+					$this->session->set_flashdata('success','HRD berhasil disuspend');
 
-	function store(){
-		if($this->input->method() == 'post'){
-			$this->form_validation->set_rules('username','Username','required|is_unique[users.users_username]');
-			$this->form_validation->set_rules('pegawai','Pegawai','required');
-			$this->form_validation->set_rules('role','Role','required');
-			$this->form_validation->set_rules('password','Password','required|min_length[6]');
+				}else if($row->active == 'n'){
+					$act = 'y';
+					$this->session->set_flashdata('success','HRD berhasil diaktifkan');
+				}
 
-
-			$redirect = base_url('user');
-			if($this->form_validation->run() == false){
-					$msg = str_replace(array('<p>','</p>'),'',validation_errors());
-					$status = false;
-					$redirect = base_url('user');
-					
+				$this->model_app->update('users',array('active'=>$act),array('username'=>$username));
 				
+				redirect('user');
 			}else{
-				$pegawai = $this->input->post('pegawai');
-				$username = $this->input->post('username');
-				$role = $this->input->post('role');
-				$pwd = $this->input->post('password');
-
-				$cek = $this->model_app->view_where('users',array('users_pegawai_id'=>$pegawai));
-				if($cek->num_rows() > 0){
-					$msg = 'Pegawai sudah memiliki akun';
-					$status = false;
-				}else{
-					$password = sha1($pwd);
-					$data = array('users_pegawai_id'=>$pegawai,'users_username'=>$username,'users_password'=>$password,'users_role'=>$role);
-					$this->model_app->insert('users',$data);
-					// $this->session->set_flashdata('success','Berhasil tambah user');
-					// redirect('user');
-					$msg = 'Berhasil tambah user';
-					$status = true;
-				}	
+				$this->session->set_flashdata('error','HRD tidak ditemukan');
+				redirect('user');
 			}
-			echo json_encode(array('status'=>$status,'msg'=>$msg,'redirect'=>$redirect));
 			
 		}else{
-			$this->session->set_flashdata('error','Wrong Method');
+			$this->session->set_flashdata('error','Wrong method');
+			redirect('pegawai');
+		}
+
+		
+	}
+	function detail($username){
+		$cek = $this->model_app->getHRDWhere(array('username'=>$username));
+		if($cek->num_rows() > 0){
+			$data['title'] = 'HRD - '.title();
+			$data['page'] = 'HRD';
+			$data['right'] = '';
+			$data['row'] = $cek->row();
+			$data['breadcrumb'] = '<li class="breadcrumb-item"><a href="'.base_url('/').'">Dashboard</a></li>';
+			$data['breadcrumb'] .= '<li class="breadcrumb-item"><a href="'.base_url('user').'">HRD</a></li>';
+			$data['breadcrumb'] .= '<li class="breadcrumb-item active">Detail</li>';
+			$data['style'] = ['assets/css/bootstrap-datetimepicker.min.css','assets/css/dataTables.bootstrap4.min.css','assets/css/select2.min.css'];
+			$data['script'] = ['assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap4.min.js','assets/js/select2.min.js'];
+			$this->template->load('template','hrd/user-detail',$data);
+			
+		}else{
+			$this->session->set_flashdata('error','HRD tidak ditemukan');
 			redirect('user');
 		}
 	}
-
-	function update(){
-		if($this->input->method() == 'post'){
-			if($this->session->userdata['isLog']['role'] == 'camat'){
-				// $this->form_validation->set_rules('username','Username','required');
-				$this->form_validation->set_rules('pegawai','Pegawai','required');
-				$this->form_validation->set_rules('role','Role','required');
+	function edit($username){
+		
 			
-				$redirect = base_url('user');
-				if($this->form_validation->run() == false){
-						$msg = str_replace(array('<p>','</p>'),'',validation_errors());
-						$status = false;
-					
-				}else{
-					$id = $this->input->post('id');
-					$pegawai = $this->input->post('pegawai');
-					// $username = $this->input->post('username');
-					$role = $this->input->post('role');
-					// $pwd = $this->input->post('password');
-
-					$cek = $this->model_app->view_where('users',array('users_id'=>$id));
-					if($cek->num_rows() > 0){
-						$row = $cek->row_array();
-						if($row['users_pegawai_id'] != $pegawai){
-							$peg = $this->model_app->view_where('users',array('users_pegawai_id'=>$pegawai));
-							if($peg->num_rows() > 0){
-								$msg = 'Pegawai sudah memiliki akun';
-								$status = false;
-								
-							}else{
-								$pgw = $pegawai;
-								$status = true;
-							}
-						}else{
-							$status = true;
-							$pgw = $row['users_pegawai_id'];
-						}
-
+			$cek = $this->model_app->join_where2('hrd','users','users_id','id',array('username'=>$username));
+			if($cek->num_rows() > 0){
+				$data['title'] = 'HRD - '.title();
+				$data['page'] = 'HRD';
+				$data['right'] = '';
+				$data['row'] = $cek->row();
+				$data['breadcrumb'] = '<li class="breadcrumb-item"><a href="'.base_url('/').'">Dashboard</a></li>';
+				$data['breadcrumb'] .= '<li class="breadcrumb-item"><a href="'.base_url('user').'">HRD</a></li>';
+				$data['breadcrumb'] .= '<li class="breadcrumb-item active">Edit</li>';
+				$data['style'] = ['assets/css/bootstrap-datetimepicker.min.css','assets/css/dataTables.bootstrap4.min.css','assets/css/select2.min.css'];
+				$data['script'] = ['assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap4.min.js','assets/js/select2.min.js'];
+				$this->template->load('template','hrd/user-edit',$data);
 				
-
-						if($status == true){
-							
-							$data = array('users_pegawai_id'=>$pgw,'users_role'=>$role);
-
-							
-							
-							$this->model_app->update('users',$data,array('users_id'=>$id));
-							$msg =  'Berhasil update user';
-							$status = true;
-						}else{
-							$status = false;
-						}
-						
-
-					}else{
-						$status = false;
-						$msg = 'User tidak ditemukan';
-					
-					}
-				}
 			}else{
-				$this->form_validation->set_rules('username','Username','required');
-				// $this->form_validation->set_rules('pegawai','Pegawai','required');
-				// $this->form_validation->set_rules('role','Role','required');
-			
-				$redirect = base_url('user');
-				if($this->form_validation->run() == false){
-						$msg = str_replace(array('<p>','</p>'),'',validation_errors());
-						$status = false;
-					
-				}else{
-					$id = $this->input->post('id');
-					// $pegawai = $this->input->post('pegawai');
-					$username = $this->input->post('username');
-					// $role = $this->input->post('role');
-					$pwd = $this->input->post('password');
-
-					$cek = $this->model_app->view_where('users',array('users_id'=>$id));
-					if($cek->num_rows() > 0){
-						$row = $cek->row_array();
-						
-
-						
-							if($pwd != ''){
-								$password = sha1($pwd);
-								
-							}else{
-								$password = $row['users_password'];
-							}
-							
-							if($row['users_username'] != $username){
-								$cekUs = $this->db->query("SELECT * FROM users WHERE users_username = '$username' AND users_id != $id ");
-								if($cekUs->num_rows() > 0){
-									$status = false;
-									$msg =  'Username sudah digunakan';
-								
-								}else{
-									$username = $username;
-									$status = true;
-								}
-							}else{
-								$status = true;
-								$username = $row['users_username'];
-
-								
-							}
-
-							if($status == true){
-							
-								$data = array('users_username'=>$username,'users_password'=>$password);
-
-								
-								$this->model_app->update('users',$data,array('users_id'=>$id));
-								$msg =  'Berhasil update user';
-								$status = true;
-							}else{
-								$status = false;
-							}
-						
-					}else{
-						$status = false;
-						$msg = 'User tidak ditemukan';
-					
-					}
-				}
+				$this->session->set_flashdata('error','HRD tidak ditemukan');
+				redirect('user');
 			}
 			
-			echo json_encode(array('status'=>$status,'msg'=>$msg,'redirect'=>$redirect));
-		}
+		
+
+		
 	}
-	
-	function detail(){
+	function update($username){
 		if($this->input->method() == 'post'){
-			$id = $this->input->post('id');
-			$cek = $this->model_app->view_where('users',array('users_id'=>$id));
-			$arr = null;
-			if($cek->num_rows() > 0 ){
-				$row = $cek->row_array();
-				$peg = $this->model_app->view_where('pegawai',array('pegawai_id'=>$row['users_pegawai_id']));
-				if($peg->num_rows() > 0 ){
-					$status = true;
-					$msg = null;
-					$rows = $peg->row_array();
-					$arr = array('id'=>$row['users_id'],'username'=>$row['users_username'],'pegawai'=>$rows['pegawai_name'],'role'=>$row['users_role'],'peg_id'=>$row['users_pegawai_id']);
+			$cek = $this->model_app->getHRDWhere(array('username'=>$username));
+			if($cek->num_rows() > 0){
+				$row = $cek->row();
+				$id = $row->id;
+				$this->form_validation->set_rules('username','Username','required|edit_unique[users.username.id.'.$id.']');
+				$this->form_validation->set_rules('name','Nama','required');
+				$this->form_validation->set_rules('pob','Tempat Lahir','required');
+				$this->form_validation->set_rules('phone','Telepon/Hp','required');
+			
+				$this->form_validation->set_rules('dob','Tanggal lahir','required');
+				$this->form_validation->set_rules('address','Alamat','required');
+			
+
+
+
+
+
+
+
+				if($this->form_validation->run() == false){
+					
+					$this->edit($username);
+					
 				}else{
-					$status  =false;
-					$msg = 'Pegawai tidak ditemukan';
+					
+					$name = $this->input->post('name');
+		
+					$username = $this->input->post('username');
+					$pwd = $this->input->post('password');
+					$telp = $this->input->post('phone');
+					$alamat = $this->input->post('address');
+					$pob = $this->input->post('pob');
+					$dob = $this->input->post('dob');
+					$tgl = date('Y-m-d',strtotime($dob));
+					if(trim($pwd)){
+						$password = sha1($pwd);
+					}else{
+						$password = $row->password;
+					}
+					
+					$data = array('username'=>$username,'password'=>$password,'level'=>'hrd');
+					 $this->model_app->update('users',$data,array('username'=>$row->username));
+					$config['upload_path']          = './upload/user/';
+					$config['encrypt_name'] = TRUE;
+					$config['allowed_types']        = 'gif|jpg|png|jpeg';
+					$config['max_size']             = 5000;
+						
+							
+					$this->load->library('upload', $config);
+
+					if ($this->upload->do_upload('file')){
+						$upload_data = $this->upload->data();
+						$foto = $upload_data['file_name'];
+					}else{
+						$foto = $row->photo;
+					}
+					$dataPeg = array('name'=>$name,'address'=>$alamat,'phone'=>$telp,
+								 'pob'=>$pob,'dob'=>$tgl,'photo'=>$foto);
+					$this->model_app->update('hrd',$dataPeg,array('id'=>$row->pegawai_id));
+					$this->session->set_flashdata('success','HRD berhasil ditambah');
+					redirect('user');
 				}
+				
 			}else{
-				$status = false;
-				$msg = 'User tidak ditemukan';
+				$this->session->set_flashdata('error','HRD tidak ditemukan');
+				redirect('user');
 			}
-			echo json_encode(array('status'=>$status,'msg'=>$msg,'data'=>$arr));
+		}else{
+			$this->session->set_flashdata('error','Wrong method');
+			redirect('user');
+		
 		}
 	}
 	function delete(){
-		if($this->input->method() == 'get'){
-			$id = $this->input->get('id');
-			$cek = $this->model_app->view_where('users',array('users_id'=>$id));
-			$arr = null;
-			if($cek->num_rows() > 0 ){
-				$this->model_app->delete('users',array('users_id'=>$id));
-				$this->session->set_flashdata('success','Berhasil hapus user');
-			}else{
-				$this->session->set_flashdata('error',json_encode('User tidak ditemukan'));
-			}
+		if($this->input->method() == 'post'){
+			
+				$id = $this->input->post('username');
+
+				$cek = $this->model_app->view_where('users',array('username'=>$id));
+				if($cek->num_rows() > 0){
+					$row = $cek->row();
+					$this->model_app->delete('hrd',array('users_id'=>$row->id));
+					$this->model_app->delete('users',array('username'=>$id));
+					$this->session->set_flashdata('success','HRD berhasil dihapus');
+					redirect('user');
+				}else{
+					$this->session->set_flashdata('error',json_encode('HRD tidak ditemukan'));
+					redirect('user');
+				}
+			
+		}else{
+			$this->session->set_flashdata('error',json_encode('Wrong Method'));
 			redirect('user');
 		}
 	}
+	function store(){
+		if($this->input->method() == 'post'){
+			
+				$this->form_validation->set_rules('username','Username','required|is_unique[users.username]');
+				$this->form_validation->set_rules('name','Nama','required');
+				$this->form_validation->set_rules('pob','Tempat Lahir','required');
+				$this->form_validation->set_rules('phone','Telepon/Hp','required');
+				$this->form_validation->set_rules('password','Password','required');
+				$this->form_validation->set_rules('dob','Tanggal lahir','required');
+				$this->form_validation->set_rules('address','Alamat','required');
+			
+
+
+
+
+
+
+
+				if($this->form_validation->run() == false){
+					
+					$this->add();
+					
+				}else{
+					
+					$name = $this->input->post('name');
+					$nip = $this->input->post('nip');
+					$username = $this->input->post('username');
+					$pwd = $this->input->post('password');
+					$telp = $this->input->post('phone');
+					$alamat = $this->input->post('address');
+					$pob = $this->input->post('pob');
+					$dob = $this->input->post('dob');
+				
+					$tgl = date('Y-m-d',strtotime($dob));
+				
+					$data = array('username'=>$username,'password'=>sha1($pwd),'active'=>'y','level'=>'hrd');
+					$users_id = $this->model_app->insert_id('users',$data);
+					$config['upload_path']          = './upload/user/';
+					$config['encrypt_name'] = TRUE;
+					$config['allowed_types']        = 'gif|jpg|png|jpeg';
+					$config['max_size']             = 5000;
+						
+							
+					$this->load->library('upload', $config);
+
+					if ($this->upload->do_upload('file')){
+						$upload_data = $this->upload->data();
+						$foto = $upload_data['file_name'];
+					}else{
+						$foto = 'default.png';
+					}
+					$dataPeg = array('name'=>$name,'address'=>$alamat,'phone'=>$telp,
+								 'pob'=>$pob,'dob'=>$tgl,'users_id'=>$users_id,'photo'=>$foto);
+					$this->model_app->insert('hrd',$dataPeg);
+					$this->session->set_flashdata('success','HRD berhasil ditambah');
+					redirect('user');
+				}
+			
+		
+		}
+	}
+
 }
 

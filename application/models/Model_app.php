@@ -137,6 +137,18 @@ class Model_app extends CI_model{
        
         return $this->db->get();
     }
+    public function getHRDWhere($where){
+        $table1= 'hrd';
+        $table2='users';
+        $field = 'users_id';
+        $field1 = 'id';
+        $this->db->select('*,hrd.id as hrd_id');
+        $this->db->from($table1);
+        $this->db->join($table2, $table1.'.'.$field.'='.$table2.'.'.$field1);
+        $this->db->where($where);
+       
+        return $this->db->get();
+    }
     public function join_where_order($table1,$table2,$field,$where,$order,$ordering){
         $this->db->select('*');
         $this->db->from($table1);
