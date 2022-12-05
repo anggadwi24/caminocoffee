@@ -22,10 +22,15 @@
       $date_awal  = new DateTime($jam_start);
       $date_akhir = new DateTime($jam_end);
       $selisih = $date_akhir->diff($date_awal);
+     
+      
+      $hari = $selisih->format('%d');
 
       $jam = $selisih->format('%h');
       $menit = $selisih->format('%i');
-      
+      if($hari > 0){
+        $jam = ($hari*24)+$jam;
+      }
       if($menit >= 0 && $menit <= 9){
         $menit = "0".$menit;
       }
@@ -34,6 +39,44 @@
       $hasil = number_format($hasil,2);
       return $hasil;
    }
+   function progressColor($percent){
+    if($percent >= 0 AND $percent < 25){
+       $bg = 'bg-danger';
+    }else if($percent >= 25 AND $percent < 50){
+      $bg = 'bg-warning';
+    }else if($percent >= 50 AND $percent < 75){
+      $bg = 'bg-info';
+    }else{
+      $bg = 'bg-success';
+    }
+    return $bg;
+   }
+   function getOvertime($jam_start,$jam_end){
+    $date_awal  = new DateTime($jam_start);
+    $date_akhir = new DateTime($jam_end);
+    $selisih = $date_akhir->diff($date_awal);
+    $hari = $selisih->format('%d');
+    $jam = $selisih->format('%h');
+    $menit = $selisih->format('%i');
+    
+    if($hari > 0){
+      $jam = ($hari*24)+$jam;
+    }
+    if($menit >= 30){
+      $hours = $jam+1;
+      $minutes =  0;
+    }else{
+      $hours = $jam;
+      $minutes = $menit;
+    }
+   
+    if($minutes >= 0 && $minutes <= 9){
+      $minutes = "0".$minutes;
+    }
+    $hasil = $hours.".".$minutes;
+    $hasil = number_format($hasil,2);
+    return $hasil;
+ }
    function tanggalwaktu($date){
     date_default_timezone_set('Asia/Makassar');
     // array hari dan bulan

@@ -6,6 +6,7 @@ class Schedule extends CI_Controller
 	public function __construct()
 	{
         parent::__construct();
+        date_default_timezone_set('Asia/Makassar');
     	if($this->session->userdata('isLog')){
 			$this->id = $this->session->userdata['isLog']['id'];
 			$this->role = $this->session->userdata['isLog']['role'];

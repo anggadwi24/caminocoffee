@@ -123,15 +123,17 @@
                             <small class="d-block">
                                         <?php 
                                         if($row->early_in == 'y'){ 
-                                            echo "Early in";
-                                        }else{ 
-                                            if($row->absen_in > $row->schedule_in){
-                                                echo "Terlambat";
+                                           
+                                            if($row->absen_in <= $row->schedule_in){
+                                              
+                                                echo "Early in";
 
                                             }else{
                                                 echo "Ontime";
 
                                             }
+                                        }else{ 
+                                            echo "Terlambat";
                                         }
                                         ?>
                             </small>

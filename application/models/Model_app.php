@@ -138,7 +138,7 @@ class Model_app extends CI_model{
         return $this->db->get();
     }
     public function getAbsensi($employee,$month,$year){
-        $this->db->select('absensi.id,pegawai.name,users.username,schedule_out,schedule_in,absen_in,absen_out,absensi.date,early_out,early_in,pegawai.photo,shift.id as shift_id,schedule.id as schedule_id,pegawai.id as pegawai_id,users.id as users_id,shift.name as shift_name');
+        $this->db->select('absensi.id,pegawai.name,users.username,schedule_out,schedule_in,absensi.duration,absen_in,absen_out,absensi.date,early_out,early_in,pegawai.photo,shift.id as shift_id,schedule.id as schedule_id,pegawai.id as pegawai_id,users.id as users_id,shift.name as shift_name');
         $this->db->from('absensi');
         $this->db->join('pegawai', 'absensi.pegawai_id=pegawai.id');
         $this->db->join('users', 'pegawai.users_id=users.id');
