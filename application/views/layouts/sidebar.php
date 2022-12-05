@@ -1,6 +1,12 @@
 <div class="sidebar" id="sidebar">
                 <div class="sidebar-inner slimscroll">
 					<div id="sidebar-menu" class="sidebar-menu">
+						<?php
+							 $role = $this->session->userdata['isLog']['role'];
+							 if($role == 'hrd'){
+
+							 
+						?>
 						<ul>
 							<li class="menu-title"> 
 								<span>Main</span>
@@ -13,13 +19,11 @@
 							<li class="menu-title"> 
 								<span>Pegawai</span>
 							</li>
-							<li class="submenu">
-								<a href="#" ><i class="la la-calendar"></i> <span> Kehadiran</span> <span class="menu-arrow"></span> </a>
-								<ul style="display: none;">
-									<li><a href="profile.html"> Absensi </a></li>
-									<li><a href="client-profile.html"> Overtime </a></li>
-								</ul>
+							<li >
+								<a href="<?= base_url('absensi')?>" class="active"><i class="la la-calendar"></i> <span> Absensi</span> </a>
+								
 							</li>
+							
 							<li >
 								<a href="<?= base_url('pegawai')?>" class="active"><i class="la la-user"></i> <span> Pegawai</span> </a>
 								
@@ -49,6 +53,34 @@
 							</li>
 							
 						</ul>
+						<?php }else{ ?>
+							<ul>
+							<li class="menu-title"> 
+								<span>Main</span>
+							</li>
+							<li class="active">
+								<a href="<?= base_url() ?>" ><i class="la la-dashboard"></i> <span> Dashboard</span> </a>
+								
+							</li>
+							
+							
+							<li >
+								<a href="<?= base_url('absensi')?>" class="active"><i class="la la-calendar"></i> <span> Absensi</span> </a>
+								
+							</li>
+							
+							<li >
+								<a href="#" ><i class="la la-money"></i> <span> Gaji</span> </a>
+								
+							</li>
+							<li >
+								<a href="<?= base_url('schedule')?>" ><i class="la la-calendar"></i> <span>Jadwal</span> </a>
+								
+							</li>
+							
+							
+						</ul>
+						<?php }?>
 					</div>
                 </div>
             </div>

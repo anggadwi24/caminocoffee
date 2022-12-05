@@ -137,6 +137,68 @@ class Model_app extends CI_model{
        
         return $this->db->get();
     }
+    public function getAbsensi($employee,$month,$year){
+        $this->db->select('absensi.id,pegawai.name,users.username,schedule_out,schedule_in,absen_in,absen_out,absensi.date,early_out,early_in,pegawai.photo,shift.id as shift_id,schedule.id as schedule_id,pegawai.id as pegawai_id,users.id as users_id,shift.name as shift_name');
+        $this->db->from('absensi');
+        $this->db->join('pegawai', 'absensi.pegawai_id=pegawai.id');
+        $this->db->join('users', 'pegawai.users_id=users.id');
+
+        $this->db->join('schedule', 'absensi.schedule_id=schedule.id');
+        $this->db->join('shift', 'schedule.shift_id=shift.id');
+        $this->db->where('YEAR(date)',$year);
+        $this->db->where('MONTH(date)',$month);
+
+
+        if($employee){
+            $this->db->where('users.username',$employee);
+        }
+        $this->db->order_by('absensi.id','desc');
+        return $this->db->get();
+    }
+    public function getAbsensiPegawai($employee,$month,$year){
+        $this->db->select('absensi.id,pegawai.name,users.username,schedule_out,schedule_in,absen_in,absen_out,absensi.date,early_out,early_in,pegawai.photo,shift.id as shift_id,schedule.id as schedule_id,pegawai.id as pegawai_id,users.id as users_id,shift.name as shift_name');
+        $this->db->from('absensi');
+        $this->db->join('pegawai', 'absensi.pegawai_id=pegawai.id');
+        $this->db->join('users', 'pegawai.users_id=users.id');
+
+        $this->db->join('schedule', 'absensi.schedule_id=schedule.id');
+        $this->db->join('shift', 'schedule.shift_id=shift.id');
+        $this->db->where('YEAR(date)',$year);
+        $this->db->where('MONTH(date)',$month);
+
+
+        if($employee){
+            $this->db->where('users.username',$employee);
+        }
+        $this->db->order_by('absensi.id','desc');
+        return $this->db->get();
+    }
+    public function getAbsensiWhere($where){
+        $this->db->select('absensi.id as absensi_id,pegawai.*,users.*,schedule_out,schedule_in,absen_in,absen_out,absensi.date,early_out,early_in,pegawai.photo,shift.id as shift_id,schedule.id as schedule_id,pegawai.id as pegawai_id,users.id as users_id,shift.name as shift_name');
+        $this->db->from('absensi');
+        $this->db->join('pegawai', 'absensi.pegawai_id=pegawai.id');
+        $this->db->join('users', 'pegawai.users_id=users.id');
+
+        $this->db->join('schedule', 'absensi.schedule_id=schedule.id');
+        $this->db->join('shift', 'schedule.shift_id=shift.id');
+        $this->db->where($where);
+       
+        $this->db->order_by('absensi.id','desc');
+        return $this->db->get();
+    }
+    public function getUser(){
+        $table1= 'pegawai';
+        $table2='users';
+        $field = 'users_id';
+        $field1 = 'id';
+        $this->db->select('*,pegawai.id as pegawai_id');
+        $this->db->from($table1);
+        $this->db->join($table2, $table1.'.'.$field.'='.$table2.'.'.$field1);
+        $this->db->order_by('name','asc');
+  
+       
+        return $this->db->get();
+    }
     public function getHRDWhere($where){
         $table1= 'hrd';
         $table2='users';

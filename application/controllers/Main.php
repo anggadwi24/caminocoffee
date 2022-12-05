@@ -22,7 +22,8 @@ class Main extends CI_Controller
 			$data['title'] = 'DASHBOARD - '.title();
 			$this->template->load('template','hrd/dashboard',$data);
 		}else if($this->role == 'pegawai'){
-
+			$data['title'] = 'DASHBOARD - '.title();
+			$this->template->load('template','pegawai/dashboard',$data);
 		}
 		
 	}

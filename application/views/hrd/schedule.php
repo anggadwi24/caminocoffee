@@ -76,7 +76,20 @@
                     <?php 
                         foreach($employee->result() as $row){
                     ?>
-                    <tr>
+                    <?php if($row->active == 'y'){
+                        if($this->session->userdata['isLog']['username'] == $row->username){
+                            echo "<tr class='bg-info '>";
+                            $styles = 'text-dark';
+                        }else{
+                            echo "<tr  class=''>";
+                            $styles = 'text-dark';
+                        }
+                      
+                    }else{
+                        echo "<tr class='bg-warning'>";
+                        $styles = 'text-white';
+                    } ?>
+                   
                         <td>
                             <h2 class="table-avatar">
                                 <a class="avatar avatar-xs" href="<?= base_url('pegawai/detail/'.$row->username) ?>">
@@ -95,18 +108,42 @@
                                 ?>
                                    
                                 </a>
-                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>"><?= $row->name ?></a>
+                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>" class="<?=$styles?>"><?= $row->name ?></a>
                             </h2>
                         </td>
                         <?php 
-                            $start_date_1 = $start_date;
-                            $end_date_1 = $end_date;
-                            print_r($start_date_1);
-                              for($a = $start_date_1; $a <= $end_date_1; $a->modify('+1 day')){
-                                echo '<td>'.$i->format('d').'</td>';
+                            
+                          
+                              for($a = 1; $a <= $difference;$a++){
+                                $date = $years.'-'.$months.'-'.numberString($a);
+                                $date = date('Y-m-d',strtotime($date));
+                                $check = $this->model_app->view_where('schedule',array('pegawai_id'=>$row->pegawai_id,'dates'=>$date,'months'=>$months,'years'=>$years));
+                                if($check->num_rows() > 0){
+                                    $checks = $check->row();
+                                    if($checks->shift_id != NULL AND $checks->status == 'on'){
+                                        $shift = $this->model_app->view_where('shift',array('id'=>$checks->shift_id));
+                                        if($shift->num_rows() > 0){
+                                            $shf = $shift->row();
+                                          
+                                            echo '<td><a href="javascript:void(0);" class="detail '.$styles.'" data-date="'.$date.'" data-username="'.$row->username.'" data-id="'.encode($checks->id).'">'.$shf->name.'</a></td>';
+
+                                        }else{
+                                            echo '<td><a href="javascript:void(0);" class="detail text-warning" data-date="'.$date.'"  data-username="'.$row->username.'" data-id="'.encode($checks->id).'">-</a></td>';
+                                        }
+                                    }else{
+                                        if($checks->status == 'off'){
+                                            $sts = 'Off';
+                                        }else{
+                                            $sts = 'DC';
+                                        }
+                                        echo '<td><a href="javascript:void(0);" class="detail text-danger" data-date="'.$date.'"  data-username="'.$row->username.'" data-id="'.encode($checks->id).'">'.$sts.'</a></td>';
+                                        
+                                    }
+                                }else{
+                                    echo '<td><a href="javascript:void(0);" class="detail '.$styles.'" data-date="'.$date.'"  data-username="'.$row->username.'" data-id="'.encode('not').'">-</a></td>';
+                                }
                               }
-                            $start_date_1 = $start_date;
-                            $end_date_1 = $end_date;
+                           
                         
                         ?>         
                     </tr>
@@ -122,104 +159,18 @@
 </div>
 
 
-<div class="modal custom-modal fade" id="attendance_info" role="dialog">
+<div class="modal custom-modal fade" id="detail_schedule" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Attendance Info</h5>
+                <h5 class="modal-title">Keterangan Jadwal</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card punch-status">
-                            <div class="card-body">
-                                <h5 class="card-title">Timesheet <small class="text-muted">11 Mar 2019</small></h5>
-                                <div class="punch-det">
-                                    <h6>Punch In at</h6>
-                                    <p>Wed, 11th Mar 2019 10.00 AM</p>
-                                </div>
-                                <div class="punch-info">
-                                    <div class="punch-hours">
-                                        <span>3.45 hrs</span>
-                                    </div>
-                                </div>
-                                <div class="punch-det">
-                                    <h6>Punch Out at</h6>
-                                    <p>Wed, 20th Feb 2019 9.00 PM</p>
-                                </div>
-                                <div class="statistics">
-                                    <div class="row">
-                                        <div class="col-md-6 col-6 text-center">
-                                            <div class="stats-box">
-                                                <p>Break</p>
-                                                <h6>1.21 hrs</h6>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 col-6 text-center">
-                                            <div class="stats-box">
-                                                <p>Overtime</p>
-                                                <h6>3 hrs</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card recent-activity">
-                            <div class="card-body">
-                                <h5 class="card-title">Activity</h5>
-                                <ul class="res-activity-list">
-                                    <li>
-                                        <p class="mb-0">Punch In at</p>
-                                        <p class="res-activity-time">
-                                            <i class="fa fa-clock-o"></i>
-                                            10.00 AM.
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p class="mb-0">Punch Out at</p>
-                                        <p class="res-activity-time">
-                                            <i class="fa fa-clock-o"></i>
-                                            11.00 AM.
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p class="mb-0">Punch In at</p>
-                                        <p class="res-activity-time">
-                                            <i class="fa fa-clock-o"></i>
-                                            11.15 AM.
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p class="mb-0">Punch Out at</p>
-                                        <p class="res-activity-time">
-                                            <i class="fa fa-clock-o"></i>
-                                            1.30 PM.
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p class="mb-0">Punch In at</p>
-                                        <p class="res-activity-time">
-                                            <i class="fa fa-clock-o"></i>
-                                            2.00 PM.
-                                        </p>
-                                    </li>
-                                    <li>
-                                        <p class="mb-0">Punch Out at</p>
-                                        <p class="res-activity-time">
-                                            <i class="fa fa-clock-o"></i>
-                                            7.30 PM.
-                                        </p>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                <div class="row" id="data">
+                    
                 </div>
             </div>
         </div>

@@ -18,6 +18,22 @@
        
        
    }
+   function selisihJam($jam_start,$jam_end){
+      $date_awal  = new DateTime($jam_start);
+      $date_akhir = new DateTime($jam_end);
+      $selisih = $date_akhir->diff($date_awal);
+
+      $jam = $selisih->format('%h');
+      $menit = $selisih->format('%i');
+      
+      if($menit >= 0 && $menit <= 9){
+        $menit = "0".$menit;
+      }
+      
+      $hasil = $jam.".".$menit;
+      $hasil = number_format($hasil,2);
+      return $hasil;
+   }
    function tanggalwaktu($date){
     date_default_timezone_set('Asia/Makassar');
     // array hari dan bulan
@@ -87,6 +103,14 @@ if (!function_exists('fulldate')) {
 
     return $result;
   }
+}
+function numberString($number){
+  if($number > 0 AND $number < 10){
+    $number = '0'.$number;
+  }else{
+    $number = $number;
+  }
+  return $number;
 }
     function daysDifference($endDate, $beginDate)
     {

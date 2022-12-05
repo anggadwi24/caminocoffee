@@ -4,11 +4,11 @@ export default function error(title,msg){
        
         html:msg,
         allowOutsideClick: false,
-  allowEscapeKey: false,
+        allowEscapeKey: false,
         
           
         customClass: 'swal-wide',
-         type:'warning',
+        type:'warning',
         
         })  
     }

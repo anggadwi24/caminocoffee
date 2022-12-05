@@ -35,7 +35,7 @@ class Auth extends CI_Controller
 								$pegawai = $this->model_app->view_where('pegawai',array('users_id'=>$row['id']));
 								if($pegawai->num_rows() > 0 ){
 									$child = $pegawai->row_array();
-									$data = array('id'=>$row['id'],'username'=>$row['username'],'child'=>$child['id'],'role'=>$row['level'],'name'=>$child['name']);
+									$data = array('id'=>$row['id'],'username'=>$row['username'],'child'=>$child['id'],'role'=>$row['level'],'name'=>$child['name'],'photo'=>$child['photo']);
 									$this->session->set_userdata('isLog',$data);
 									redirect('/');
 								}else{
@@ -46,7 +46,7 @@ class Auth extends CI_Controller
 								$hrd = $this->model_app->view_where('hrd',array('users_id'=>$row['id']));
 								if($hrd->num_rows() > 0 ){
 									$child = $hrd->row_array();
-									$data = array('id'=>$row['id'],'username'=>$row['username'],'child'=>$child['id'],'role'=>$row['level'],'name'=>$child['name']);
+									$data = array('id'=>$row['id'],'username'=>$row['username'],'child'=>$child['id'],'role'=>$row['level'],'name'=>$child['name'],'photo'=>$child['photo']);
 									$this->session->set_userdata('isLog',$data);
 									redirect('/');
 								}else{
