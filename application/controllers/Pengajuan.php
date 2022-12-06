@@ -139,8 +139,9 @@ class Pengajuan extends CI_Controller
                                
                                 $file_name = $_FILES['file']['name']; 
                                 $file = $upload_data['file_name'];
+                                $totalDays = daysDifference($endDate,$startDate)+1;
                                 $data = array('perihal'=>$perihal,'start'=>$startDate,'end'=>$endDate,'pegawai_id'=>$this->child,
-                                             'reason'=>$reason,'file'=>$file,'file_name'=>$file_name,'approve'=>'p');
+                                             'reason'=>$reason,'file'=>$file,'file_name'=>$file_name,'approve'=>'p','total_days'=>$totalDays);
                                 $this->model_app->insert('pengajuan',$data);
                                
                                 $this->session->set_flashdata('success','Pengajuan Cuti/DC berhasil diajuakn');

@@ -93,21 +93,17 @@
                     <div class="dropdown profile-action">
                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="<?= base_url('pegawai/detail/'.$row->username)?>" ><i class="fa fa-pencil m-r-5"></i> Edit</a>
-                            <a class="dropdown-item delete" href="#" data-username="<?=$row->username?>" ><i class="fa fa-trash-o m-r-5"></i> Delete</a>
-                            <?php 
-                                if($row->active == 'y'){
-                            ?>
-                                 <a class="dropdown-item" href="<?= base_url('pegawai/status/'.$row->username)?>" ><i class="fa fa-times m-r-5"></i> Suspend</a>
-                            <?php }else{?>      
-                                <a class="dropdown-item" href="<?= base_url('pegawai/status/'.$row->username)?>" ><i class="fa fa-check m-r-5"></i> Active</a>
-                            <?php }?> 
+                            <a class="dropdown-item" href="<?= base_url('gaji/detail?slip='.encode($row->id))?>" ><i class="fa fa-eye m-r-5"></i> Detail</a>
 
+                            <a class="dropdown-item" href="<?= base_url('gaji/edit?slip='.encode($row->id))?>" ><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                          
+                            
                         </div>
                     </div>
                     <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a href="<?= base_url('pegawai/edit/'.$row->username)?>"><?= ucwords($row->name)?></a></h4>
                    
-                    <div class="small text-muted"><?php if($row->active == 'y'){echo "Active";}else{ echo "Suspend";}?></div>
+                    <div class="small text-muted"><?= $row->username ?></div>
+                    <h4 class="user-name m-t-10 mb-0 text-ellipsis"><?= rp($row->total_salary) ?></h4>
 
                 </div>
             </div>

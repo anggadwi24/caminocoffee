@@ -3025,6 +3025,20 @@ table.dataTable thead > tr > td.sorting {
 	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2);
 	overflow: hidden;
 }
+.profile-widget-one {
+	background-color: #fff;
+	/* border: 1px solid #ededed; */
+	border-radius: 4px;
+	/* margin-bottom: 30px; */
+	padding: 20px;
+	text-align: center;
+	position: relative;
+	/* box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.2); */
+	overflow: hidden;
+}
+.profile-widget-one .user-name > a {
+	color: #333;
+}
 .profile-widget .user-name > a {
 	color: #333;
 }

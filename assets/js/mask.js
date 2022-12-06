@@ -2,6 +2,13 @@
   'use strict';
 
   $.mask.definitions['~'] = '[+-]';
+  $('#rupiah').mask('999.999.999.999',{
+    prefix: "Rp. ",
+    groupSeparator: ".",
+    alias: "numeric",
+    placeholder: "0",
+  });
+  $('.mata-uang').mask('0.000.000.000', {reverse: true});
   $('#date').mask('99/99/9999');
   $('#phone').mask('(999) 999-9999');
   $('#phoneExt').mask('(999) 999-9999? x99999');
@@ -27,4 +34,6 @@
   }).dblclick(function () {
     $(this).unmask();
   });
+
+
 })(jQuery);

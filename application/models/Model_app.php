@@ -187,17 +187,31 @@ class Model_app extends CI_model{
         return $this->db->get();
     }
     public function getGajiPegawai($employee,$month,$year){
-        $this->db->select('slip.*,pegawai.name,users.username,pegawai.id as pegawai_id');
+        $this->db->select('slip.*,pegawai.name,pegawai.photo,users.username,pegawai.id as pegawai_id');
         $this->db->from('slip');
         $this->db->join('pegawai', 'slip.pegawai_id=pegawai.id');
         $this->db->join('users', 'pegawai.users_id=users.id');
-        $this->db->where('YEAR(months)',$year);
-        $this->db->where('MONTH(years)',$month);
+        $this->db->where('months',$month);
+        $this->db->where('years',$year);
+        
 
 
         if($employee){
             $this->db->where('users.username',$employee);
         }
+        $this->db->order_by('slip.id','desc');
+        return $this->db->get();
+    }
+    public function getGajiPegawaiWhere($id){
+        $this->db->select('slip.*,pegawai.name,pegawai.photo,users.username,pegawai.id as pegawai_id');
+        $this->db->from('slip');
+        $this->db->join('pegawai', 'slip.pegawai_id=pegawai.id');
+        $this->db->join('users', 'pegawai.users_id=users.id');
+        $this->db->where('slip.id',$id);
+     
+        
+
+
         $this->db->order_by('slip.id','desc');
         return $this->db->get();
     }

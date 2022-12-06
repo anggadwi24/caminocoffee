@@ -1,14 +1,14 @@
 export default function successOne(title,msg,redirect){
     Swal.fire({
         title: title,
-        icon :'success',
+        type :'success',
         text:msg,
         allowOutsideClick: false,
-  allowEscapeKey: false
+      allowEscapeKey: false
      
-      }).then((result) => {
+      }).then((isConfirmed) => {
         /* Read more about isConfirmed, isDenied below */
-        if (result.isConfirmed) {
+        if (isConfirmed) {
             window.location = redirect;
         }
       })
