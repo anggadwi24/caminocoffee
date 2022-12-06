@@ -187,7 +187,7 @@
                         }?>
                     </div>
                     <div class="stats-info">
-                        <p>Minggu ini <strong><?= $weekStatResult->durasi ?> <small>/ <?= $weekStat->total*8 ?> hrs</small></strong></p>
+                        <p>Minggu ini <strong><?= round($weekStatResult->durasi,1) ?> <small>/ <?= $weekStat->total*8 ?> hrs</small></strong></p>
                         <?php 
                             $percent = round($weekStatResult->durasi/($weekStat->total*8)*100,0);
                         ?>
@@ -196,9 +196,10 @@
                         </div>
                     </div>
                     <div class="stats-info">
-                        <p>Bulan ini <strong><?= $monthStatResult->durasi ?> <small>/ <?= $monthStat->total*8 ?> hrs</small></strong></p>
+                        <p>Bulan ini <strong><?= round($monthStatResult->durasi,1) ?> <small>/ <?= $monthStat->total*8 ?> hrs</small></strong></p>
                         <?php 
-                            $percent = round($monthStatResult->durasi/($monthStat->total*8)*100,0);
+                            $percent = $monthStatResult->durasi/($monthStat->total*8)*100;
+                            $percent = round($percent,0);
                         ?>
                         <div class="progress">
                             <div class="progress-bar  <?= progressColor($percent)?>" role="progressbar" style="width: <?=$percent?>%" aria-valuenow="<?=$percent?>" aria-valuemin="0" aria-valuemax="100"></div>

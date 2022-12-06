@@ -125,6 +125,14 @@ class Model_app extends CI_model{
        
         return $this->db->get();
     }
+    public function join_where2_select($select,$table1,$table2,$field,$field1,$where){
+        $this->db->select($select);
+        $this->db->from($table1);
+        $this->db->join($table2, $table1.'.'.$field.'='.$table2.'.'.$field1);
+        $this->db->where($where);
+       
+        return $this->db->get();
+    }
     public function getUserWhere($where){
         $table1= 'pegawai';
         $table2='users';
@@ -153,6 +161,44 @@ class Model_app extends CI_model{
             $this->db->where('users.username',$employee);
         }
         $this->db->order_by('absensi.id','desc');
+        return $this->db->get();
+    }
+    public function view_pengajuan($employee,$month,$year){
+        $this->db->select('*,pengajuan.created_at as tanggal,pengajuan.id as pengajuan_id');
+        $this->db->from('pengajuan');
+        $this->db->join('pegawai', 'pengajuan.pegawai_id=pegawai.id');
+        $this->db->join('users', 'pegawai.users_id=users.id');
+        if($employee != 'all'){
+            $this->db->where('users.username',$employee);
+        }
+       
+       
+        $this->db->where('YEAR(end)',$year);
+
+        $this->db->where('MONTH(start)',$month);
+        $this->db->or_where('MONTH(end)',$month);
+
+
+
+
+
+       
+        $this->db->order_by('pengajuan.id','desc');
+        return $this->db->get();
+    }
+    public function getGajiPegawai($employee,$month,$year){
+        $this->db->select('slip.*,pegawai.name,users.username,pegawai.id as pegawai_id');
+        $this->db->from('slip');
+        $this->db->join('pegawai', 'slip.pegawai_id=pegawai.id');
+        $this->db->join('users', 'pegawai.users_id=users.id');
+        $this->db->where('YEAR(months)',$year);
+        $this->db->where('MONTH(years)',$month);
+
+
+        if($employee){
+            $this->db->where('users.username',$employee);
+        }
+        $this->db->order_by('slip.id','desc');
         return $this->db->get();
     }
     public function getAbsensiPegawai($employee,$month,$year){

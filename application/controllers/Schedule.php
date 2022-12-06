@@ -10,6 +10,7 @@ class Schedule extends CI_Controller
     	if($this->session->userdata('isLog')){
 			$this->id = $this->session->userdata['isLog']['id'];
 			$this->role = $this->session->userdata['isLog']['role'];
+            $this->child = $this->session->userdata['isLog']['child'];
 		}else{
 			redirect('auth');
 		}	
@@ -371,7 +372,7 @@ class Schedule extends CI_Controller
                                             <h5 class="card-title">Cuti/DC <small class="text-muted">'.fulldate($date).'</small>'.$act.'</h5>
                                             <div class="punch-det">
                                                 
-                                                <p>'.$peng->reason.'</p>
+                                                <p>'.$peng->perihal.'</p>
                                             </div>
                                             <div class="statistics">
                                             <div class="row">

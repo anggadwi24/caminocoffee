@@ -29,11 +29,15 @@
 								
 							</li>
 							<li >
-								<a href="#" ><i class="la la-money"></i> <span> Gaji</span> </a>
+								<a href="<?=base_url('gaji')?>" ><i class="la la-money"></i> <span> Gaji</span> </a>
 								
 							</li>
 							<li >
 								<a href="<?= base_url('schedule')?>" ><i class="la la-calendar"></i> <span>Jadwal</span> </a>
+								
+							</li>
+							<li >
+								<a href="<?= base_url('pengajuan')?>" ><i class="la la-sticky-note"></i> <span>Pengajuan</span> </a>
 								
 							</li>
 							<li class="menu-title"> 
@@ -70,11 +74,15 @@
 							</li>
 							
 							<li >
-								<a href="#" ><i class="la la-money"></i> <span> Gaji</span> </a>
+								<a href="<?=base_url('gaji')?>" ><i class="la la-money"></i> <span> Gaji</span> </a>
 								
 							</li>
 							<li >
 								<a href="<?= base_url('schedule')?>" ><i class="la la-calendar"></i> <span>Jadwal</span> </a>
+								
+							</li>
+							<li >
+								<a href="<?= base_url('pengajuan')?>" ><i class="la la-sticky-note"></i> <span>Pengajuan</span> </a>
 								
 							</li>
 							

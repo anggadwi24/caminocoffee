@@ -181,12 +181,12 @@ class Absensi extends CI_Controller
                                 $duration = selisihJam($absen->absen_in,date('H:i:s'));
                                 $data = ['absen_out'=>date('Y-m-d H:i:s'),'early_out'=>$early_out,'duration'=>$duration];
                                 $this->model_app->update('absensi',$data,array('id'=>$absen->id));
-                                $sch_out = $absen->date.' '.$shf->schedule_out;
-                                if( date('Y-m-d H:i') > date('Y-m-d H:i',strtotime($sch_out,strtotime('+30 Minutes'))) ){
-                                    $duration = getOvertime($sch_out,date('Y-m-d H:i:s'));
-                                    $dataOvt = ['pegawai_id'=>$this->child,'absensi_id'=>$absen->id,'schedule_out'=>$shf->schedule_out,'absen_out'=>date('H:i:s'),'overtime'=>$duration];
-                                    $this->model_app->insert('overtime',$dataOvt);
-                                }
+                                // $sch_out = $absen->date.' '.$shf->schedule_out;
+                                // if( date('Y-m-d H:i') > date('Y-m-d H:i',strtotime($sch_out,strtotime('+30 Minutes'))) ){
+                                //     $duration = getOvertime($sch_out,date('Y-m-d H:i:s'));
+                                //     $dataOvt = ['pegawai_id'=>$this->child,'absensi_id'=>$absen->id,'schedule_out'=>$shf->schedule_out,'absen_out'=>date('H:i:s'),'overtime'=>$duration];
+                                //     $this->model_app->insert('overtime',$dataOvt);
+                                // }
                                 redirect('absensi');
                             }else{
                                 $this->session->set_flashdata('error','Shift tidak ditemukan');
