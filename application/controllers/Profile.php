@@ -9,83 +9,260 @@ class Profile extends CI_Controller
     	if($this->session->userdata('isLog')){
 			$this->id = $this->session->userdata['isLog']['id'];
 			$this->role = $this->session->userdata['isLog']['role'];
+			$this->child = $this->session->userdata['isLog']['child'];
+
 		}else{
 			redirect('auth');
 		}	
 	}
     function index(){
-        $data['row'] = $this->model_app->join_where2('users','pegawai','users_pegawai_id','pegawai_id',array('users_id'=>$this->id))->row_array();
-        $data['title'] = 'PROFIL - '.title();
-		$this->template->load('template','profile',$data);
+        if($this->role == 'hrd'){
+            $cek = $this->model_app->getHRDWhere(array('hrd.id'=>$this->child));
+            if($cek->num_rows() > 0){
+                $data['title'] = 'PROFIL - '.title();
+                $data['page'] = 'Profil';
+                $data['right'] = '';
+                $data['row'] = $cek->row();
+                $data['breadcrumb'] = '<li class="breadcrumb-item"><a href="'.base_url('/').'">Dashboard</a></li>';
+              
+                $data['breadcrumb'] .= '<li class="breadcrumb-item active">Profil</li>';
+                $data['style'] = ['assets/css/bootstrap-datetimepicker.min.css','assets/css/dataTables.bootstrap4.min.css','assets/css/select2.min.css'];
+                $data['script'] = ['assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap4.min.js','assets/js/select2.min.js'];
+                $this->template->load('template','hrd/profile',$data);
+                
+            }else{
+                $this->session->set_flashdata('error','Sesi telah berakhir');
+                redirect('logout');
+            }
+        }else{
+            $cek = $this->model_app->getUserWhere(array('pegawai.id'=>$this->child));
+            if($cek->num_rows() > 0){
+                $data['title'] = 'PROFIL - '.title();
+                $data['page'] = 'Profil';
+                $data['right'] = '';
+                $data['row'] = $cek->row();
+                $data['breadcrumb'] = '<li class="breadcrumb-item"><a href="'.base_url('/').'">Dashboard</a></li>';
+              
+                $data['breadcrumb'] .= '<li class="breadcrumb-item active">Profil</li>';
+                $data['style'] = ['assets/css/bootstrap-datetimepicker.min.css','assets/css/dataTables.bootstrap4.min.css','assets/css/select2.min.css'];
+                $data['script'] = ['assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap4.min.js','assets/js/select2.min.js'];
+                $this->template->load('template','pegawai/profile',$data);
+                
+            }else{
+                $this->session->set_flashdata('error','Sesi telah berakhir');
+                redirect('logout');
+            }
+        }
+        
 
 
     }
     function update(){
         if($this->input->method() == 'post'){
-            $row = $this->model_app->join_where2('users','pegawai','users_pegawai_id','pegawai_id',array('users_id'=>$this->id))->row_array();
-            // $golongan = $this->input->post('golongan');
-            $pob = $this->input->post('pob');
-            $dob = $this->input->post('dob');
-         
-            $config['upload_path']          = './upload/user/';
-            $config['encrypt_name'] = TRUE;
-            $config['allowed_types']        = 'gif|jpg|png|jpeg';
-            $config['max_size']             = 5000;
+           if($this->role == 'hrd'){
+                $cek = $this->model_app->getHRDWhere(array('hrd.id'=>$this->child));
+                if($cek->num_rows() > 0){
+                    $row = $cek->row();
+                    $id = $row->id;
                 
-                    
-            $this->load->library('upload', $config);
+                    $this->form_validation->set_rules('name','Nama','required');
+                    $this->form_validation->set_rules('pob','Tempat Lahir','required');
+                    $this->form_validation->set_rules('phone','Telepon/Hp','required');
+                
+                    $this->form_validation->set_rules('dob','Tanggal lahir','required');
+                    $this->form_validation->set_rules('address','Alamat','required');
+                
 
-            if ($this->upload->do_upload('file')){
-                $upload_data = $this->upload->data();
-                $foto = $upload_data['file_name'];
-            }else{
-                $foto = $row['pegawai_photo'];
-            }
-            $data = array('pegawai_email'=>$this->input->post('email'),'pegawai_religion'=>$this->input->post('agama'),'pegawai_phone'=>$this->input->post('hp'),'pegawai_address'=>$this->input->post('address'),'pegawai_gender'=>$this->input->post('jk'),'pegawai_pob'=>$pob,'pegawai_dob'=>$dob,'pegawai_photo'=>$foto);
-            $this->model_app->update('pegawai',$data,array('pegawai_id'=>$row['users_pegawai_id']));
-            $this->session->set_flashdata('success','Biodata berhasil disimpan');
-            redirect('profile');
-        }else{
-            redirect('profile');
-        }
-    }
-    function users(){
-        if($this->input->method() == 'post'){
-            $username = $this->input->post('username');
-            $pwd = $this->input->post('pwd');
-           
-            $cek =$this->model_app->join_where2('users','pegawai','users_pegawai_id','pegawai_id',array('users_id'=>$this->id));
-            if($cek->num_rows() > 0){
-                $row = $cek->row_array();
-                if(trim($pwd)){
-                    $password = sha1($pwd);
-                                
-                }else{
-                    $password = $row['users_password'];
-                }
-                if($row['users_username'] != $username){
-                    $check = $this->db->query("SELECT * FROM users WHERE users_username = '".$username."' AND users_id != ".$this->id." ");
-                    if($check->num_rows() > 0){
-                        $this->session->set_flashdata('error',json_encode('username sudah digunakan'));
-                        redirect('profile');
+
+
+
+
+
+
+                    if($this->form_validation->run() == false){
+                        
+                        $this->index();
+                        
                     }else{
-                        $data = array('users_username'=>$username,'users_password'=>$password);
-                        $this->model_app->update('users',$data,array('users_id'=>$row['users_id']));
-                        $this->session->set_flashdata('success','Data pengguna berhasil diubah');
+                        
+                        $name = $this->input->post('name');
+            
+                        
+                        $pwd = $this->input->post('password');
+                        $telp = $this->input->post('phone');
+                        $alamat = $this->input->post('address');
+                        $pob = $this->input->post('pob');
+                        $dob = $this->input->post('dob');
+                        $tgl = date('Y-m-d',strtotime($dob));
+                    
+                        
+                        $config['upload_path']          = './upload/user/';
+                        $config['encrypt_name'] = TRUE;
+                        $config['allowed_types']        = 'gif|jpg|png|jpeg';
+                        $config['max_size']             = 5000;
+                            
+                                
+                        $this->load->library('upload', $config);
+
+                        if ($this->upload->do_upload('file')){
+                            $upload_data = $this->upload->data();
+                            $foto = $upload_data['file_name'];
+                        }else{
+                            $foto = $row->photo;
+                        }
+                        $dataPeg = array('name'=>$name,'address'=>$alamat,'phone'=>$telp,
+                                    'pob'=>$pob,'dob'=>$tgl,'photo'=>$foto);
+                        $this->model_app->update('hrd',$dataPeg,array('id'=>$this->child));
+                        $this->session->set_flashdata('success','Profil berhasil disimpan');
                         redirect('profile');
                     }
+                    
                 }else{
-                    $data = array('users_username'=>$username,'users_password'=>$password);
-                    $this->model_app->update('users',$data,array('users_id'=>$row['users_id']));
-                    $this->session->set_flashdata('success','Data pengguna berhasil diubah');
-                    redirect('profile');
+                    $this->session->set_flashdata('error','Sesi telah berakhir');
+                    redirect('logout');
+                }
+
+           }else{
+            $cek = $this->model_app->getUserWhere(array('pegawai.id'=>$this->child));
+			if($cek->num_rows() > 0){
+				$row = $cek->row();
+				$id = $row->id;
+			
+				$this->form_validation->set_rules('name','Nama','required');
+				$this->form_validation->set_rules('pob','Tempat Lahir','required');
+				$this->form_validation->set_rules('phone','Telepon/Hp','required');
+			
+				$this->form_validation->set_rules('dob','Tanggal lahir','required');
+				$this->form_validation->set_rules('address','Alamat','required');
+			
+
+
+
+
+
+
+
+				if($this->form_validation->run() == false){
+					
+					$this->index();
+					
+				}else{
+					
+					$name = $this->input->post('name');
+		
+					
+					$pwd = $this->input->post('password');
+					$telp = $this->input->post('phone');
+					$alamat = $this->input->post('address');
+					$pob = $this->input->post('pob');
+					$dob = $this->input->post('dob');
+					$tgl = date('Y-m-d',strtotime($dob));
+				
+					
+					$config['upload_path']          = './upload/user/';
+					$config['encrypt_name'] = TRUE;
+					$config['allowed_types']        = 'gif|jpg|png|jpeg';
+					$config['max_size']             = 5000;
+						
+							
+					$this->load->library('upload', $config);
+
+					if ($this->upload->do_upload('file')){
+						$upload_data = $this->upload->data();
+						$foto = $upload_data['file_name'];
+					}else{
+						$foto = $row->photo;
+					}
+					$dataPeg = array('name'=>$name,'address'=>$alamat,'phone'=>$telp,
+								 'pob'=>$pob,'dob'=>$tgl,'photo'=>$foto);
+					$this->model_app->update('pegawai',$dataPeg,array('id'=>$this->child));
+					$this->session->set_flashdata('success','Profil berhasil disimpan');
+					redirect('profile');
+				}
+				
+			}else{
+				$this->session->set_flashdata('error','Sesi telah berakhir');
+				redirect('logout');
+			}
+           }
+        }else{
+            redirect('profile');
+        }
+    }
+    public function updateLogin(){
+        if($this->input->method() == 'post'){
+            if($this->role == 'hrd'){
+                $cek = $this->model_app->getHRDWhere(array('hrd.id'=>$this->child));
+                if($cek->num_rows() > 0){
+                    $row = $cek->row();
+                    $id = $row->id;
+                    $this->form_validation->set_rules('username','Username','required|edit_unique[users.username.id.'.$id.']');
+                
+        
+                    if($this->form_validation->run() == false){
+                        
+                        $this->index();
+                        
+                    }else{
+                       
+                        $username = $this->input->post('username');
+                        $pwd = $this->input->post('password');
+                       
+                        if(trim($pwd)){
+                            $password = sha1($pwd);
+                        }else{
+                            $password = $row->password;
+                        }
+                        
+                        $data = array('username'=>$username,'password'=>$password,'level'=>'hrd');
+                         $this->model_app->update('users',$data,array('username'=>$row->username));
+                       
+                        $this->session->set_flashdata('success','Data login berhasil disimpan');
+                        redirect('profile');
+                    }
+                    
+                }else{
+                    $this->session->set_flashdata('error','Sesi telah berakhir');
+                    redirect('logout');
                 }
             }else{
-                $this->session->set_flashdata('error',json_encode('Pengguna tidak ditemukan'));
-                redirect('profile');
+                $cek = $this->model_app->getUserWhere(array('pegawai.id'=>$this->child));
+                if($cek->num_rows() > 0){
+                    $row = $cek->row();
+                    $id = $row->id;
+                    $this->form_validation->set_rules('username','Username','required|edit_unique[users.username.id.'.$id.']');
+                
+        
+                    if($this->form_validation->run() == false){
+                        
+                        $this->index();
+                        
+                    }else{
+                       
+                        $username = $this->input->post('username');
+                        $pwd = $this->input->post('password');
+                       
+                        if(trim($pwd)){
+                            $password = sha1($pwd);
+                        }else{
+                            $password = $row->password;
+                        }
+                        
+                        $data = array('username'=>$username,'password'=>$password,'level'=>'pegawai');
+                         $this->model_app->update('users',$data,array('username'=>$row->username));
+                       
+                        $this->session->set_flashdata('success','Data login berhasil disimpan');
+                        redirect('profile');
+                    }
+                    
+                }else{
+                    $this->session->set_flashdata('error','Sesi telah berakhir');
+                    redirect('logout');
+                }
             }
         }else{
             redirect('profile');
         }
     }
+
 }

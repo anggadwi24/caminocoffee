@@ -24,7 +24,10 @@
 					<a href="<?= base_url('absensi')?>" class="active"><i class="la la-calendar"></i> <span> Absensi</span> </a>
 					
 				</li>
-				
+				<li <?php if($menu == 'rekap') { echo "class='active'";}?> >
+					<a href="<?= base_url('rekap')?>" class="active"><i class="la la-calendar"></i> <span> Rekap Absensi</span> </a>
+					
+				</li>
 				<li  <?php if($menu == 'pegawai') { echo "class='active'";}?>>
 					<a href="<?= base_url('pegawai')?>" class="active"><i class="la la-user"></i> <span> Pegawai</span> </a>
 					

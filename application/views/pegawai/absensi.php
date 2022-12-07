@@ -189,7 +189,12 @@
                     <div class="stats-info">
                         <p>Minggu ini <strong><?= round($weekStatResult->durasi,1) ?> <small>/ <?= $weekStat->total*8 ?> hrs</small></strong></p>
                         <?php 
+                        if($weekStatResult->durasi > 0){
                             $percent = round($weekStatResult->durasi/($weekStat->total*8)*100,0);
+
+                        }else{
+                            $percent = 0;
+                        }
                         ?>
                         <div class="progress">
                             <div class="progress-bar  <?= progressColor($percent)?>" role="progressbar" style="width: <?=$percent?>%" aria-valuenow="<?=$percent?>" aria-valuemin="0" aria-valuemax="100"></div>
@@ -198,8 +203,14 @@
                     <div class="stats-info">
                         <p>Bulan ini <strong><?= round($monthStatResult->durasi,1) ?> <small>/ <?= $monthStat->total*8 ?> hrs</small></strong></p>
                         <?php 
+                         if($monthStatResult->durasi > 0){
                             $percent = $monthStatResult->durasi/($monthStat->total*8)*100;
                             $percent = round($percent,0);
+
+                        }else{
+                            $percent = 0;
+                        }
+                           
                         ?>
                         <div class="progress">
                             <div class="progress-bar  <?= progressColor($percent)?>" role="progressbar" style="width: <?=$percent?>%" aria-valuenow="<?=$percent?>" aria-valuemin="0" aria-valuemax="100"></div>

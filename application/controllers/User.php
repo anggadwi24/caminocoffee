@@ -204,7 +204,7 @@ class User extends CI_Controller
 					}
 					$dataPeg = array('name'=>$name,'address'=>$alamat,'phone'=>$telp,
 								 'pob'=>$pob,'dob'=>$tgl,'photo'=>$foto);
-					$this->model_app->update('hrd',$dataPeg,array('id'=>$row->pegawai_id));
+					$this->model_app->update('hrd',$dataPeg,array('id'=>$row->hrd_id));
 					$this->session->set_flashdata('success','HRD berhasil ditambah');
 					redirect('user');
 				}

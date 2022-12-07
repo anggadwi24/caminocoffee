@@ -38,7 +38,12 @@
             <div class="col-md-4 col-sm-6 col-12 col-lg-4 col-xl-3">
                 <div class="profile-widget">
                     <div class="profile-img">
-                        <a href="<?= base_url('user/detail/'.$row->username)?>" class="avatar">
+                        <?php if( $this->session->userdata['isLog']['username'] != $row->username){  ?>
+                            <a href="<?= base_url('user/detail/'.$row->username)?>" class="avatar">
+                        <?php }else{?>
+                            <a href="<?= base_url('profile')?>" class="avatar">
+                        <?php }?>
+                        
                         <?php 
                             if(file_exists('upload/user/'.$row->photo)){
                                 echo '<img src="'.base_url('upload/user/'.$row->photo).'" alt="'.$row->name.'">';
@@ -49,6 +54,7 @@
                         ?>
                         </a>
                     </div>
+                    <?php if( $this->session->userdata['isLog']['username'] != $row->username){ ?>
                     <div class="dropdown profile-action">
                         <a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
                         <div class="dropdown-menu dropdown-menu-right">
@@ -64,7 +70,8 @@
 
                         </div>
                     </div>
-                    <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a href="<?= base_url('user/detail/'.$row->username)?>"><?= ucwords($row->name)?></a></h4>
+                    <?php }?>
+                    <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a href=" <?php if($this->session->userdata['isLog']['username'] != $row->username) {echo base_url('user/detail/'.$row->username); }else{echo base_url('profile');}?>"><?= ucwords($row->name)?></a></h4>
                    
                     <div class="small text-muted"><?php if($row->active == 'y'){echo "Active";}else{ echo "Suspend";}?></div>
 

@@ -186,6 +186,22 @@ class Model_app extends CI_model{
         $this->db->order_by('pengajuan.id','desc');
         return $this->db->get();
     }
+    public function getPengajuanWhere($where){
+        $this->db->select('*,pengajuan.created_at as tanggal,pengajuan.id as pengajuan_id');
+        $this->db->from('pengajuan');
+        $this->db->join('pegawai', 'pengajuan.pegawai_id=pegawai.id');
+        $this->db->join('users', 'pegawai.users_id=users.id');
+       
+        $this->db->where($where);
+
+
+
+
+
+       
+        $this->db->order_by('pengajuan.id','desc');
+        return $this->db->get();
+    }
     public function getGajiPegawai($employee,$month,$year){
         $this->db->select('slip.*,pegawai.name,pegawai.photo,users.username,pegawai.id as pegawai_id,users.level,users.active');
         $this->db->from('slip');
@@ -257,7 +273,17 @@ class Model_app extends CI_model{
         $this->db->order_by('pegawai.name','asc');
         return $this->db->get();
     }
-    
+    public function getScheduleAll($where){
+        $this->db->select('pegawai.*,users.*,pegawai.photo,schedule.id as schedule_id,pegawai.id as pegawai_id,users.id as users_id');
+        $this->db->from('schedule');
+        $this->db->join('pegawai', 'schedule.pegawai_id=pegawai.id');
+        $this->db->join('users', 'pegawai.users_id=users.id');
+     
+        $this->db->where($where);
+        $this->db->group_by('schedule.pegawai_id');
+        $this->db->order_by('pegawai.name','asc');
+        return $this->db->get();
+    }
     public function getUser(){
         $table1= 'pegawai';
         $table2='users';

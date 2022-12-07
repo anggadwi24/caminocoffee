@@ -283,73 +283,106 @@
 	<div class="col-lg-4 col-md-4">
 		<div class="dash-sidebar">
 			<section>
-				<h5 class="dash-title">Projects</h5>
+				<h5 class="dash-title">HARI KERJA BULAN <?= bulan(date('m'))?></h5>
 				<div class="card">
 					<div class="card-body">
 						<div class="time-list">
 							<div class="dash-stats-list">
-								<h4>71</h4>
-								<p>Total Tasks</p>
+								<h4><?= $scheduleOn->num_rows()?></h4>
+								<p>Hari Kerja</p>
 							</div>
 							<div class="dash-stats-list">
-								<h4>14</h4>
-								<p>Pending Tasks</p>
+								<h4><?= $att->total?></h4>
+								<p>Hari absensi</p>
 							</div>
 						</div>
 						<div class="request-btn">
 							<div class="dash-stats-list">
-								<h4>2</h4>
-								<p>Total Projects</p>
+								<?php if($att->total > 0){
+								?>
+								<h4><?= round($att->durasi/$att->total,2) ?></h4>
+
+								<?php }else{ echo "<h4>0</h4>";
+								} ?>
+								<p>Rata rata jam kerja</p>
 							</div>
 						</div>
 					</div>
 				</div>
 			</section>
-			<section>
-				<h5 class="dash-title">Your Leave</h5>
-				<div class="card">
-					<div class="card-body">
-						<div class="time-list">
-							<div class="dash-stats-list">
-								<h4>4.5</h4>
-								<p>Leave Taken</p>
+			<section class="mb-3">
+				<h5 class="dash-title">Pengajuan CUTI/DC</h5>
+				<div class="dash-sec-content">
+					<?php 
+						if($peganjuanAll->num_rows() > 0){
+						
+							foreach($peganjuanAll->result() as $cut){
+								
+								if($cut->approve == 'y'){
+									$icon = '<i class="fa fa-check"></i>';
+									$bg = 'text-success';
+								}elseif($cut->approve == 'p'){
+									$icon = '<i class="fa fa-hourglass-o"></i>';
+									$bg = 'text-warning';
+								}else{
+									$icon = '<i class="fa fa-times"></i>';
+									$bg = 'text-danger';
+								}
+								echo '<div class="dash-info-list '.$bg.'">
+											<a href="'.base_url('pengajuan/detail?no='.encode($cut->id)).'" class="dash-card '.$bg.'">
+												<div class="dash-card-container">
+													
+												
+													<div class="dash-card-icon">
+														'.$icon.'
+													</div>
+													<div class="dash-card-content ">
+														<p>'.$cut->perihal.'</p>
+														
+													</div>
+													<div class="dash-card-avatars">
+														'.date('d/m/Y',strtotime($cut->start)).' - '.date('d/m/Y',strtotime($cut->end)).'
+													</div>
+																			
+												</div>
+											</a>
+										</div>';
+								
+							}
+						}else {
+							echo '<div class="dash-info-list">
+							<div class="dash-card">
+								<div class="dash-card-container">
+									
+								
+									
+									<div class="dash-card-content">
+										<p>Tidak ada pengajuan cuti/dc</p>
+									</div>
+															
+								</div>
 							</div>
-							<div class="dash-stats-list">
-								<h4>12</h4>
-								<p>Remaining</p>
-							</div>
-						</div>
-						<div class="request-btn">
-							<a class="btn btn-primary" href="#">Apply Leave</a>
-						</div>
-					</div>
+						</div>';
+						}
+					?>
+					
 				</div>
+				
 			</section>
+			
 			<section>
-				<h5 class="dash-title">Your time off allowance</h5>
-				<div class="card">
-					<div class="card-body">
-						<div class="time-list">
-							<div class="dash-stats-list">
-								<h4>5.0 Hours</h4>
-								<p>Approved</p>
-							</div>
-							<div class="dash-stats-list">
-								<h4>15 Hours</h4>
-								<p>Remaining</p>
-							</div>
-						</div>
-						<div class="request-btn">
-							<a class="btn btn-primary" href="#">Apply Time Off</a>
-						</div>
-					</div>
-				</div>
-			</section>
-			<section>
-				<h5 class="dash-title">Upcoming Holiday</h5>
+				<h5 class="dash-title">Libur Selanjutnya</h5>
 				<div class="card">
 					<div class="card-body text-center">
-						<h4 class="holiday-title mb-0">Mon 20 May 2019 - Ramzan</h4>
+						<?php if($scheduleOff->num_rows() > 0){
+							$off = $scheduleOff->row();	
+						?>
+						<h4 class="holiday-title mb-0"><?= fullyDate($off->dates) ?></h4>
+						<?php }else{
+						?>
+						<h4 class="holiday-title mb-0">Tidak ada pada bulan ini</h4>
+
+						<?php }?>
 					</div>
 				</div>
 			</section>
