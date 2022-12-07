@@ -187,7 +187,7 @@ class Model_app extends CI_model{
         return $this->db->get();
     }
     public function getGajiPegawai($employee,$month,$year){
-        $this->db->select('slip.*,pegawai.name,pegawai.photo,users.username,pegawai.id as pegawai_id');
+        $this->db->select('slip.*,pegawai.name,pegawai.photo,users.username,pegawai.id as pegawai_id,users.level,users.active');
         $this->db->from('slip');
         $this->db->join('pegawai', 'slip.pegawai_id=pegawai.id');
         $this->db->join('users', 'pegawai.users_id=users.id');
@@ -196,14 +196,14 @@ class Model_app extends CI_model{
         
 
 
-        if($employee){
+        if($employee != 'all' AND $employee){
             $this->db->where('users.username',$employee);
         }
         $this->db->order_by('slip.id','desc');
         return $this->db->get();
     }
     public function getGajiPegawaiWhere($id){
-        $this->db->select('slip.*,pegawai.name,pegawai.photo,users.username,pegawai.id as pegawai_id');
+        $this->db->select('slip.*,pegawai.name,pegawai.photo,users.level,users.username,pegawai.id as pegawai_id');
         $this->db->from('slip');
         $this->db->join('pegawai', 'slip.pegawai_id=pegawai.id');
         $this->db->join('users', 'pegawai.users_id=users.id');
@@ -246,6 +246,18 @@ class Model_app extends CI_model{
         $this->db->order_by('absensi.id','desc');
         return $this->db->get();
     }
+    public function getScheduleWhere($where){
+        $this->db->select('pegawai.*,users.*,schedule_out,schedule_in,pegawai.photo,shift.id as shift_id,schedule.id as schedule_id,pegawai.id as pegawai_id,users.id as users_id,shift.name as shift_name');
+        $this->db->from('schedule');
+        $this->db->join('pegawai', 'schedule.pegawai_id=pegawai.id');
+        $this->db->join('users', 'pegawai.users_id=users.id');
+        $this->db->join('shift', 'schedule.shift_id=shift.id');
+        $this->db->where($where);
+       
+        $this->db->order_by('pegawai.name','asc');
+        return $this->db->get();
+    }
+    
     public function getUser(){
         $table1= 'pegawai';
         $table2='users';

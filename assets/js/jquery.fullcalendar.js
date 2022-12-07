@@ -134,46 +134,29 @@
         var form = '';
         var today = new Date($.now());
 
-        var defaultEvents =  [{
-                title: 'Event Name 4',
-                start: new Date($.now() + 148000000),
-                className: 'bg-purple'
-            },
-            {
-                title: 'Test Event 1',
-                start: today,
-                end: today,
-                className: 'bg-success'
-            },
-            {
-                title: 'Test Event 2',
-                start: new Date($.now() + 168000000),
-                className: 'bg-info'
-            },
-            {
-                title: 'Test Event 3',
-                start: new Date($.now() + 338000000),
-                className: 'bg-primary'
-            }];
+        var defaultEvents =  [];
 
         var $this = this;
         $this.$calendarObj = $this.$calendar.fullCalendar({
             slotDuration: '00:15:00', /* If we want to split day time each 15minutes */
-            minTime: '08:00:00',
-            maxTime: '19:00:00',  
+            // minTime: '08:00:00',
+            // maxTime: '19:00:00',  
             defaultView: 'month',  
             handleWindowResize: true,   
-            height: $(window).height() - 200,   
+            height: 500,   
             header: {
                 left: 'prev,next today',
                 center: 'title',
                 right: 'month,agendaWeek,agendaDay'
             },
+           
             events: defaultEvents,
-            editable: true,
-            droppable: true, // this allows things to be dropped onto the calendar !!!
+            timeFormat: 'H(:mm)',
+            displayEventTime: false,
+            editable: false,
+            droppable: false, // this allows things to be dropped onto the calendar !!!
             eventLimit: true, // allow "more" link when too many events
-            selectable: true,
+            selectable: false,
             drop: function(date) { $this.onDrop($(this), date); },
             select: function (start, end, allDay) { $this.onSelect(start, end, allDay); },
             eventClick: function(calEvent, jsEvent, view) { $this.onEventClick(calEvent, jsEvent, view); }

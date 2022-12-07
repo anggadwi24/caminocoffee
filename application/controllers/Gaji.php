@@ -26,28 +26,29 @@ class Gaji extends CI_Controller
         $data['script'] = ['assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap4.min.js','assets/js/select2.min.js'];
         $data['title'] = 'GAJI - '.title();
         $data['page'] = 'Gaji';
+        $data['bulan'] = [
+            ['bulan'=>'Januari','code'=>'01'],
+            ['bulan'=>'Februari','code'=>'02'],
+            ['bulan'=>'Maret','code'=>'03'],
+            ['bulan'=>'April','code'=>'04'],
+            ['bulan'=>'Mei','code'=>'05'],
+            ['bulan'=>'Juni','code'=>'06'],
+            ['bulan'=>'Juli','code'=>'07'],
+            ['bulan'=>'Agustus','code'=>'08'],
+            ['bulan'=>'September','code'=>'09'],
+            ['bulan'=>'Oktober','code'=>'10'],
+            ['bulan'=>'November','code'=>'11'],
+            ['bulan'=>'Desember','code'=>'12'],
+
+
+        ];
         if($this->role == 'hrd'){
           
            
             $data['right'] = ' <a href="'.base_url('gaji/add').'" class="btn add-btn" ><i class="fa fa-plus"></i> Tambah</a>
                                 ';
            
-            $data['bulan'] = [
-                ['bulan'=>'Januari','code'=>'01'],
-                ['bulan'=>'Februari','code'=>'02'],
-                ['bulan'=>'Maret','code'=>'03'],
-                ['bulan'=>'April','code'=>'04'],
-                ['bulan'=>'Mei','code'=>'05'],
-                ['bulan'=>'Juni','code'=>'06'],
-                ['bulan'=>'Juli','code'=>'07'],
-                ['bulan'=>'Agustus','code'=>'08'],
-                ['bulan'=>'September','code'=>'09'],
-                ['bulan'=>'Oktober','code'=>'10'],
-                ['bulan'=>'November','code'=>'11'],
-                ['bulan'=>'Desember','code'=>'12'],
-    
-    
-            ];
+          
             $years = $this->input->get('year');
             $months = $this->input->get('month');
             $employee = $this->input->get('pegawai');
@@ -70,6 +71,21 @@ class Gaji extends CI_Controller
            
             $data['record'] = $this->model_app->getGajiPegawai($employee,$months,$years);
             $this->template->load('template','hrd/gaji',$data);
+        }else{
+            $years = $this->input->get('year');
+            $months = $this->input->get('month');
+            $data['right'] = '';
+          
+            if($years == null){
+                $years = date('Y');
+            }
+            if($months == null){
+                $months = date('m');
+            }
+            $data['month'] = $months;
+            $data['year'] = $years;
+            $data['row'] = $this->model_app->getGajiPegawai($this->username,$months,$years);
+            $this->template->load('template','pegawai/gaji',$data);
         }
     }
     public function add(){
@@ -132,12 +148,12 @@ class Gaji extends CI_Controller
                     $username = $this->input->post('username');
                     $month = $this->input->post('month');
                     $year = $this->input->post('year');
-                    $pokok = $this->input->post('pokok');
-                    $meal = $this->input->post('meal');
-                    $overtime = $this->input->post('overtime');
-                    $insentif = $this->input->post('insentif');
-                    $bpjs = $this->input->post('bpjs');
-                    $potongan = $this->input->post('potongan');
+                    $pokok = numberReplace($this->input->post('pokok'));
+                    $meal = numberReplace($this->input->post('meal'));
+                    $overtime = numberReplace($this->input->post('overtime'));
+                    $insentif = numberReplace($this->input->post('insentif'));
+                    $bpjs = numberReplace($this->input->post('bpjs'));
+                    $potongan = numberReplace($this->input->post('potongan'));
 
                     $row = $this->model_app->getUserWhere(array('username'=>$username));
                     if($row->num_rows() > 0){
@@ -464,6 +480,7 @@ class Gaji extends CI_Controller
                     $cuti = $this->db->query("SELECT coalesce(COUNT(a.id),0) as total  FROM schedule a  WHERE a.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='dc' ")->row();
 
                     $overtime = $this->db->query("SELECT COALESCE(SUM(overtime),0) as ovt FROM absensi a JOIN overtime b ON a.id = b.absensi_id WHERE a.pegawai_id = $row->pegawai_id AND MONTH(a.date) = '".$month."' AND YEAR(a.date) = '".$years."' ")->row();
+                    
                     $data['title'] = 'GAJI - '.title();
                     $data['page'] = 'Gaji';
                 
@@ -475,7 +492,7 @@ class Gaji extends CI_Controller
                     $data['breadcrumb'] = '<li class="breadcrumb-item"><a href="'.base_url('/').'">Dashboard</a></li>';
                     $data['breadcrumb'] .= '<li class="breadcrumb-item"><a href="'.base_url('gaji').'">Gaji</a></li>';
                     $data['breadcrumb'] .= '<li class="breadcrumb-item active">Edit</li>';
-                 
+                    $data['ajax'] = ['assets/ajax/gaji/edit.js'];
                     $data['style'] = ['assets/css/bootstrap-datetimepicker.min.css','assets/css/dataTables.bootstrap4.min.css','assets/css/select2.min.css'];
                     $data['script'] = ['assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/plugins/input-mask/jquery.inputmask.bundle.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap4.min.js','assets/js/select2.min.js'];
                     $data['lastMonth'] = $lastMonth;
@@ -500,6 +517,164 @@ class Gaji extends CI_Controller
 
             }else{
                 $this->session->set_flashdata('error','Gaji tidak ditemukan');
+                redirect('gaji');
+            }
+        }else{
+            redirect('gaji');
+        }
+        
+    }
+    public function detail(){
+        $id = decode($this->input->get('slip'));
+        if($this->role == 'hrd'){
+            $row = $this->model_app->getGajiPegawaiWhere($id);
+            if($row->num_rows() > 0){
+                $row = $row->row();
+                $date = '01-'.$row->months.'-'.$row->years;
+                           
+
+                $dateTime = new DateTime($date);
+
+                $month = $dateTime->modify('-' . $dateTime->format('d') . ' days')->format('m');
+                $years = $dateTime->modify('-' . $dateTime->format('d') . ' days')->format('Y');
+
+                $data['month']= $month;
+                $data['years'] = $years;
+                $data['bulan'] =$row->months;
+                
+                // echo $lastMonth; // 'December 2013'
+                // $dates1 = date('m-Y',strtotime($monthY));
+                // $dates = date("d-m-Y", strtotime("-1 month"));
+            
+                // $month = date('m',strtotime($dates));
+                
+                // $years = date('Y',strtotime($dates));
+                // $month = date('m',strtotime($bulan,strtotime('-1 Months')));
+                // if($month == '01'){
+                //     $month = 12;
+                // }else{
+                //     $month = $month;
+                // }
+                // $years = date('Y',strtotime($year,strtotime('-1 Months')));
+
+                $schedule = $this->model_app->view_where('schedule',array('months'=>$month,'years'=>$years,'pegawai_id'=>$row->pegawai_id));
+                if($schedule->num_rows() > 0){
+                    $lastMonth = $this->db->query("SELECT coalesce(COUNT(a.id),0) as total  FROM schedule a  WHERE a.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='on' ")->row();
+                    $lastMonthResult = $this->db->query("SELECT coalesce(SUM(b.duration),0) as durasi, COUNT(b.id) as totalAbsen FROM schedule a JOIN absensi b ON a.id = b.schedule_id  WHERE b.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='on'")->row();
+                    $percentHours = round($lastMonthResult->durasi/($lastMonth->total*8)*100,1);
+                    $hours = $lastMonth->total*8;
+                    $terlambat = $this->db->query("SELECT coalesce(COUNT(b.id),0) as totalEarlyIn FROM schedule a JOIN absensi b ON a.id = b.schedule_id  WHERE b.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='on' AND early_in ='n' ")->row();
+                    if($terlambat->totalEarlyIn > 0){
+                        $percentTerlambat = round($terlambat->totalEarlyIn/$lastMonthResult->totalAbsen*100,0);
+                    
+                    }else{
+                        $percentTerlambat= 0;
+                    }
+                    $pulang = $this->db->query("SELECT coalesce(COUNT(b.id),0) as totalEarlyOut FROM schedule a JOIN absensi b ON a.id = b.schedule_id  WHERE b.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='on' AND early_out ='y' ")->row();
+                    if($pulang->totalEarlyOut > 0){
+                        $percentPulang = round($pulang->totalEarlyOut/$lastMonthResult->totalAbsen*100,0);
+                    
+                    }else{
+                        $percentPulang =0;
+                    
+                    }
+                    $percentHari = round($lastMonthResult->totalAbsen/$lastMonth->total*100,2);
+                    $off = $this->db->query("SELECT coalesce(COUNT(a.id),0) as total  FROM schedule a  WHERE a.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='off' ")->row();
+                    $cuti = $this->db->query("SELECT coalesce(COUNT(a.id),0) as total  FROM schedule a  WHERE a.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='dc' ")->row();
+
+                    $overtime = $this->db->query("SELECT COALESCE(SUM(overtime),0) as ovt FROM absensi a JOIN overtime b ON a.id = b.absensi_id WHERE a.pegawai_id = $row->pegawai_id AND MONTH(a.date) = '".$month."' AND YEAR(a.date) = '".$years."' ")->row();
+                    $data['title'] = 'GAJI - '.title();
+                    $data['page'] = 'Gaji';
+                
+                    $data['right'] = '';
+                    $data['row'] = $row;
+                    
+                    
+            
+                    $data['breadcrumb'] = '<li class="breadcrumb-item"><a href="'.base_url('/').'">Dashboard</a></li>';
+                    $data['breadcrumb'] .= '<li class="breadcrumb-item"><a href="'.base_url('gaji').'">Gaji</a></li>';
+                    $data['breadcrumb'] .= '<li class="breadcrumb-item active">Edit</li>';
+                    $data['ajax'] = ['assets/ajax/gaji/edit.js'];
+                    $data['style'] = ['assets/css/bootstrap-datetimepicker.min.css','assets/css/dataTables.bootstrap4.min.css','assets/css/select2.min.css'];
+                    $data['script'] = ['assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/plugins/input-mask/jquery.inputmask.bundle.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap4.min.js','assets/js/select2.min.js'];
+                    $data['lastMonth'] = $lastMonth;
+                    $data['lastMonthResult'] = $lastMonthResult;
+                    $data['percentHours'] = $percentHours;
+                    $data['hours'] = $hours;
+                    $data['terlambat'] = $terlambat;
+                    $data['percentTerlambat'] = $percentTerlambat;
+                    $data['pulang'] = $pulang;
+                    $data['percentPulang'] = $percentPulang;
+                    $data['percentHari'] = $percentHari;
+                    $data['off'] = $off;
+                    $data['cuti'] = $cuti;
+                    $data['overtime'] = $overtime;
+                    $this->template->load('template','hrd/gaji-detail',$data);
+
+                }else{
+                    $this->session->set_flashdata('error','Schedule gaji tidak ditemukan');
+                    redirect('gaji');
+                }
+                
+
+            }else{
+                $this->session->set_flashdata('error','Gaji tidak ditemukan');
+                redirect('gaji');
+            }
+        }else{
+            redirect('gaji');
+        }
+        
+    }
+    public function update(){
+        if($this->role == 'hrd'){
+            if($this->input->method() == 'post'){
+                $id = decode($this->input->post('id'));
+                $row = $this->model_app->getGajiPegawaiWhere($id);
+                if($row->num_rows() > 0){
+                  
+                    $this->form_validation->set_rules('pokok','Gaji Pokok','required');
+                    $this->form_validation->set_rules('meal','Tunjangan Makan','required');
+                    $this->form_validation->set_rules('overtime','Tunjangan Overtime','required');
+                    $this->form_validation->set_rules('insentif','Insentif','required');
+                    $this->form_validation->set_rules('bpjs','Tunjangan Bpjs','required');
+                    $this->form_validation->set_rules('potongan','Potongan','required');
+                     
+                    if($this->form_validation->run() == false){
+                        $status = 201;
+                        $msg = validation_errors();
+                   
+                        
+                    }else{
+                       
+                        $pokok = numberReplace($this->input->post('pokok'));
+                        $meal = numberReplace($this->input->post('meal'));
+                        $overtime = numberReplace($this->input->post('overtime'));
+                        $insentif = numberReplace($this->input->post('insentif'));
+                        $bpjs = numberReplace($this->input->post('bpjs'));
+                        $potongan = numberReplace($this->input->post('potongan'));
+
+                        
+                        $total = ($pokok+$meal+$overtime+$insentif+$bpjs)-$potongan;
+                        $data = ['basic_salary'=>$pokok,'meal_salary'=>$meal,'overtime_pay'=>$overtime,'incentive'=>$insentif,'bpjs'=>$bpjs,'cut_salary'=>$potongan,'total_salary'=>$total];
+                        $id =  $this->model_app->update('slip',$data,array('id'=>$id));
+
+
+                        $msg = 'Gaji '.$row->name.' pada '.bulan($row->months).' berhasil diubah';
+                        $this->session->set_flashdata('success',$msg);
+                        redirect('gaji');
+
+                     
+                        
+                                
+                            
+                        
+                    }
+                }else{
+                    $this->session->set_flashdata('error','Gaji tidak ditemukan');
+                    redirect('gaji');
+                }
+            }else{
                 redirect('gaji');
             }
         }else{

@@ -13,7 +13,7 @@
         </div>
     </div>
 </div>
-<form action="<?= base_url('absensi') ?>" method="GET">
+<form action="<?= base_url('gaji') ?>" method="GET">
     <div class="row filter-row">
     
     <div class="col-sm-6 col-md-3">  

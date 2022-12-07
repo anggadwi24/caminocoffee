@@ -109,39 +109,44 @@
                         </div>
                         <div class="card-body">
                            
-                            <form action="'.base_url('gaji/update').'" method="POST">
-                                <input type="hidden" name="id" value="'.encode($row->id).'">
+                          
 
                                 <div class="row">
                                     <div class="col-12 form-group">
                                         <label>Gaji Pokok</label>
-                                        <input type="text" name="pokok"  class="form-control  rupiah" value="'.$row->basic_salary.'">
+                                        <h6>'.rp($row->basic_salary).'</h6>
                                     </div>
                                     <div class="col-12 form-group">
                                         <label>Tunjangan Makan</label>
-                                        <input type="text" name="meal"  class="form-control  rupiah" value="'.$row->meal_salary.'">
+                                        <h6>'.rp($row->meal_salary).'</h6>
+                                       
                                     </div>
                                     <div class="col-12 form-group">
                                         <label>Overtime</label>
-                                        <input type="text" name="overtime" class="form-control rupiah" value="'.$row->overtime_pay.'">
+                                        <h6>'.rp($row->overtime_pay).'</h6>
+                                    
                                     </div>
                                     <div class="col-12 form-group">
                                         <label>Insentif</label>
-                                        <input type="text" name="insentif"  class="form-control  rupiah" value="'.$row->incentive.'">
+                                        <h6>'.rp($row->incentive).'</h6>
+                                       
                                     </div>
                                     <div class="col-12 form-group">
                                         <label>BPJS</label>
-                                        <input type="text" name="bpjs" class="form-control  rupiah" value="'.$row->bpjs.'">
+                                        <h6>'.rp($row->bpjs).'</h6>
+                                      
                                     </div>
                                     <div class="col-12 form-group">
                                         <label>Potongan</label>
-                                        <input type="text" name="potongan" class="form-control  rupiah" value="'.$row->cut_salary.'">
+                                        <h6>'.rp($row->cut_salary).'</h6>
+                                      
                                     </div>
-                                    <div class="col-12 form-group text-right mt-4">
-                                        <button class="btn btn-primary">Simpan</button>
+                                    <div class="col-12 form-group ">
+                                        <label>Total Gaji</label>
+                                        <h6>'.rp($row->total_salary).'</h6>
                                     </div>
                                 </div>
-                            </form>
+                            
                         </div>
                     </div>
                 </div>';

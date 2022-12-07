@@ -78,7 +78,7 @@ class Absensi extends CI_Controller
             if($year == null){
                 $year = date('Y');
             }
-    
+            $data['right'] = '<h1 id="hours">'.date('H:i:s').'</h1>';
             $schedule = $this->model_app->view_where('schedule',array('pegawai_id'=>$this->child,'dates'=>date('Y-m-d'),'months'=>date('m'),'years'=>date('Y')));
             if($schedule->num_rows() > 0)   {
                 $sch = $schedule->row();
