@@ -40,7 +40,7 @@
                                         </a>
                                     </div>
                                    
-                                    <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a href="'. base_url('pegawai/edit/'.$row->username).'" >'. ucwords($row->name).'</a></h4>
+                                    <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a href="'. base_url('pegawai/edit/'.$row->username).'" >'. ucwords($row->name).'<small class="d-block text-muted">'. ucfirst($row->position).'</small></a></h4>
                                 
                                   
                 

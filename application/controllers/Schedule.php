@@ -233,8 +233,8 @@ class Schedule extends CI_Controller
                                     </div>
                                     
                                 <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a href="'.base_url('pegawai/detail/'.$row->username).'">'.$row->name.'</a></h4>
-                                <div class="small text-muted">'.$row->username.'</div>
-                                <div class="small text-muted">Pegawai</div>
+                             
+                                <div class="small text-muted">'.ucfirst($row->position).'</div>
 
                                
 

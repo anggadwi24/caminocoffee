@@ -110,7 +110,7 @@
                                     }
                                 ?>
                                 </a>
-                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>"><?= $row->name?></a>
+                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>"><?= $row->name?><small class="d-block text-muted"><?= ucfirst($row->position) ?></small></a>
                             </h2>
                         </td>
                         <td ><?= fulldate($row->start)?> - <?=fulldate($row->end)?> (<?=daysDifference($row->end,$row->start)+1  ?> hari)</td>

@@ -104,7 +104,7 @@
                         <div class="media align-items-center">
                             <a href="'.base_url('pegawai/detail/'.$sch->username).'" class="avatar">'.$img.'</a>
                             <div class="media-body">
-                                <div class="text-sm my-0">'.$sch->name.'</div>
+                                <div class="text-sm my-0">'.$sch->name.' <span class="text-muted d-block">'.ucfirst($sch->position).'</span> </div>
                             </div>
                         </div>
                         <div class="row align-items-center mt-3">
@@ -163,7 +163,7 @@
                         <div class="media align-items-center">
                             <a href="'.base_url('pegawai/detail/'.$on->username).'" class="avatar">'.$img.'</a>
                             <div class="media-body">
-                                <div class="text-sm my-0">'.$on->name.'</div>
+                                <div class="text-sm my-0">'.$on->name.' <span class="text-muted d-block">'.ucfirst($on->position).'</span></div>
                             </div>
                         </div>
                         <div class="row align-items-center mt-3">
@@ -211,7 +211,7 @@
                             <div class="media align-items-center">
                                 <a href="'.base_url('pegawai/detail/'.$tdy->username).'" class="avatar">'.$img.'</a>
                                 <div class="media-body">
-                                    <div class="text-sm my-0">'.$tdy->name.'</div>
+                                    <div class="text-sm my-0">'.$tdy->name.' <span class="text-muted d-block">'.ucfirst($tdy->position).'</span></div>
                                 </div>
                             </div>
                           

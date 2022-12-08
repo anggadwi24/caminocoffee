@@ -96,13 +96,14 @@
                             <a class="dropdown-item" href="<?= base_url('gaji/detail?slip='.encode($row->id))?>" ><i class="fa fa-eye m-r-5"></i> Detail</a>
 
                             <a class="dropdown-item" href="<?= base_url('gaji/edit?slip='.encode($row->id))?>" ><i class="fa fa-pencil m-r-5"></i> Edit</a>
+                            <a class="dropdown-item" href="<?= base_url('gaji/pdf?slip='.encode($row->id))?>" ><i class="fa fa-file-pdf-o m-r-5"></i> Download</a>
                           
                             
                         </div>
                     </div>
                     <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a href="<?= base_url('pegawai/edit/'.$row->username)?>"><?= ucwords($row->name)?></a></h4>
                    
-                    <div class="small text-muted"><?= $row->username ?></div>
+                    <div class="small text-muted"><?= ucfirst($row->position)?> </div>
                     <h4 class="user-name m-t-10 mb-0 text-ellipsis"><?= rp($row->total_salary) ?></h4>
 
                 </div>

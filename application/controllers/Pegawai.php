@@ -32,16 +32,23 @@ class Pegawai extends CI_Controller
 			$listActive = 'active';
 			$data['type'] = 'list';
 		}
+		$keyword = $this->input->get('keyword');
+		if(isset($keyword)){
+			$url = base_url('pegawai/download?keyword='.$keyword);
+		}else{
+			$url = base_url('pegawai/download');
+		}
 		$data['right'] = ' <a href="'.base_url('pegawai/add').'" class="btn add-btn" ><i class="fa fa-plus"></i> Tambah Pegawai</a>
 							<div class="view-icons">
 								<a href="'.base_url('pegawai?type=grid').'" class="grid-view btn btn-link  '.$gridActive.'"><i class="fa fa-th"></i></a>
 								<a href="'.base_url('pegawai?type=list').'" class="list-view btn btn-link '.$listActive.'"><i class="fa fa-bars"></i></a>
+								<a href="'.$url.'" class="list-view btn btn-link"  title="Download PDF"><i class="fa fa-file-pdf-o"></i></a>	
 							</div>';
 		$data['breadcrumb'] = '<li class="breadcrumb-item"><a href="'.base_url('/').'">Dashboard</a></li>';
 		$data['breadcrumb'] .= '<li class="breadcrumb-item active">Pegawai</li>';
 		$data['style'] = ['assets/css/bootstrap-datetimepicker.min.css','assets/css/dataTables.bootstrap4.min.css','assets/css/select2.min.css'];
 		$data['script'] = ['assets/js/moment.min.js','assets/js/bootstrap-datetimepicker.min.js','assets/js/jquery.dataTables.min.js','assets/js/dataTables.bootstrap4.min.js','assets/js/select2.min.js'];
-		$keyword = $this->input->get('keyword');
+		
 		if(isset($keyword)){
 			$data['record'] = $this->model_app->join_like_order2('pegawai','users','users_id','id',array('name'=>$keyword),'pegawai.id','desc');
 			$data['keyword'] = $keyword;
@@ -58,6 +65,24 @@ class Pegawai extends CI_Controller
 	
 		
 
+	}
+	public function download(){
+		$keyword = $this->input->get('keyword');
+		if(isset($keyword)){
+			$data['record'] = $this->model_app->join_like_order2('pegawai','users','users_id','id',array('name'=>$keyword),'pegawai.id','desc');
+			$data['keyword'] = $keyword;
+		}else{
+			$data['record'] = $this->model_app->join_order2('pegawai','users','users_id','id','pegawai.id','desc');
+			$data['keyword'] = '';
+
+		}
+		
+		$html = $this->load->view('hrd/pegawai-pdf',$data,true);
+		$filename = 'PEGAWAI-CAMINO-COFFEE-AND-EATERY';
+		$paper = 'A4';
+		$orientation = 'landscape';
+
+		$attach = pdf_create($html, $filename, $paper, $orientation,true);
 	}
 	public function add(){
 		$data['title'] = 'PEGAWAI - '.title();
@@ -119,6 +144,7 @@ class Pegawai extends CI_Controller
 			redirect('pegawai');
 		}
 	}
+	
 	function edit($username){
 		
 			
@@ -150,13 +176,15 @@ class Pegawai extends CI_Controller
 			if($cek->num_rows() > 0){
 				$row = $cek->row();
 				$id = $row->id;
-				$this->form_validation->set_rules('username','Username','required|edit_unique[users.username.id.'.$id.']');
+				$this->form_validation->set_rules('username','Username','required|edit_unique[users.username.'.$id.']');
 				$this->form_validation->set_rules('name','Nama','required');
 				$this->form_validation->set_rules('pob','Tempat Lahir','required');
 				$this->form_validation->set_rules('phone','Telepon/Hp','required');
 			
 				$this->form_validation->set_rules('dob','Tanggal lahir','required');
 				$this->form_validation->set_rules('address','Alamat','required');
+				$this->form_validation->set_rules('position','Jabatan','required');
+
 			
 
 
@@ -179,6 +207,8 @@ class Pegawai extends CI_Controller
 					$alamat = $this->input->post('address');
 					$pob = $this->input->post('pob');
 					$dob = $this->input->post('dob');
+					$position = $this->input->post('position');
+
 					$tgl = date('Y-m-d',strtotime($dob));
 					if(trim($pwd)){
 						$password = sha1($pwd);
@@ -203,7 +233,7 @@ class Pegawai extends CI_Controller
 						$foto = $row->photo;
 					}
 					$dataPeg = array('name'=>$name,'address'=>$alamat,'phone'=>$telp,
-								 'pob'=>$pob,'dob'=>$tgl,'photo'=>$foto);
+								 'pob'=>$pob,'dob'=>$tgl,'photo'=>$foto,'position'=>$position);
 					$this->model_app->update('pegawai',$dataPeg,array('id'=>$row->pegawai_id));
 					$this->session->set_flashdata('success','Pegawai berhasil ditambah');
 					redirect('pegawai');
@@ -251,6 +281,8 @@ class Pegawai extends CI_Controller
 				$this->form_validation->set_rules('password','Password','required');
 				$this->form_validation->set_rules('dob','Tanggal lahir','required');
 				$this->form_validation->set_rules('address','Alamat','required');
+				$this->form_validation->set_rules('position','Jabatan','required');
+
 			
 
 
@@ -273,6 +305,8 @@ class Pegawai extends CI_Controller
 					$alamat = $this->input->post('address');
 					$pob = $this->input->post('pob');
 					$dob = $this->input->post('dob');
+					$position = $this->input->post('position');
+
 				
 					$tgl = date('Y-m-d',strtotime($dob));
 				
@@ -293,7 +327,7 @@ class Pegawai extends CI_Controller
 						$foto = 'default.png';
 					}
 					$dataPeg = array('name'=>$name,'address'=>$alamat,'phone'=>$telp,
-								 'pob'=>$pob,'dob'=>$tgl,'users_id'=>$users_id,'photo'=>$foto);
+								 'pob'=>$pob,'dob'=>$tgl,'users_id'=>$users_id,'photo'=>$foto,'position'=>$position);
 					$this->model_app->insert('pegawai',$dataPeg);
 					$this->session->set_flashdata('success','Pegawai berhasil ditambah');
 					redirect('pegawai');

@@ -110,15 +110,20 @@
                             <h2 class="table-avatar">
                                 <a href="<?= base_url('pegawai/detail/'.$row->username) ?>" class="avatar">
                                 <?php 
+                                if($row->photo != '' AND $row->photo != null){
                                     if(file_exists('upload/user/'.$row->photo)){
                                         echo '<img src="'.base_url('upload/user/'.$row->photo).'" alt="'.$row->name.'">';
                                         
                                     }else{
                                         echo '<img src="'.base_url('upload/user/default.png').'" alt="'.$row->name.'">';
                                     }
+                                }else{
+                                    echo '<img src="'.base_url('upload/user/default.png').'" alt="'.$row->name.'">';
+                                }
+                                    
                                 ?>
                                 </a>
-                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>"><?= $row->name?></a>
+                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>"><?= $row->name?><span><?= ucfirst($row->position)?></span></a>
                             </h2>
                         </td>
                         <td ><?= fulldate($row->date)?></td>

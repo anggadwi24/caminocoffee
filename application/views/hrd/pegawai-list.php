@@ -64,7 +64,7 @@
                                     }
                                 ?>
                                 </a>
-                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>"><?= $row->name?> <span> <?php 
+                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>"><?= $row->name?> <span><?= ucfirst($row->position) ?></span><span> <?php 
                                 if($row->active == 'y'){ echo "Active"; }else{echo "Suspend";}
                             ?></span></a>
                             </h2>

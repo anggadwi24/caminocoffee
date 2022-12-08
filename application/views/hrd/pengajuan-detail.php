@@ -99,6 +99,10 @@
                         <h6><?= $row->name?></h6>
                     </div>
                     <div class="form-group">
+                        <label for="">Jabatan</label>
+                        <h6><?= ucfirst($row->position)?></h6>
+                    </div>
+                    <div class="form-group">
                         <label for="">Telepon/Hp</label>
                         <h6><?= $row->phone?></h6>
                     </div>

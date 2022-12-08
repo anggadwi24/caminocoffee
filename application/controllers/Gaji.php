@@ -292,7 +292,7 @@ class Gaji extends CI_Controller
                                                                     </a>
                                                                 </div>
                                                                
-                                                                <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a href="'. base_url('pegawai/edit/'.$row->username).'" >'. ucwords($row->name).'</a></h4>
+                                                                <h4 class="user-name m-t-10 mb-0 text-ellipsis"><a href="'. base_url('pegawai/edit/'.$row->username).'" >'. ucwords($row->name).' <small class="text-muted d-block">'.ucfirst($row->position).'</small></a></h4>
                                                             
                                                               
                                             
@@ -522,6 +522,105 @@ class Gaji extends CI_Controller
         }else{
             redirect('gaji');
         }
+        
+    }
+    public function pdf(){
+        $id = decode($this->input->get('slip'));
+       
+            $row = $this->model_app->getGajiPegawaiWhere($id);
+            if($row->num_rows() > 0){
+                $row = $row->row();
+                $date = '01-'.$row->months.'-'.$row->years;
+                           
+
+                $dateTime = new DateTime($date);
+
+                $month = $dateTime->modify('-' . $dateTime->format('d') . ' days')->format('m');
+                $years = $dateTime->modify('-' . $dateTime->format('d') . ' days')->format('Y');
+
+                $data['month']= $month;
+                $data['years'] = $years;
+                $data['bulan'] =$row->months;
+                
+                // echo $lastMonth; // 'December 2013'
+                // $dates1 = date('m-Y',strtotime($monthY));
+                // $dates = date("d-m-Y", strtotime("-1 month"));
+            
+                // $month = date('m',strtotime($dates));
+                
+                // $years = date('Y',strtotime($dates));
+                // $month = date('m',strtotime($bulan,strtotime('-1 Months')));
+                // if($month == '01'){
+                //     $month = 12;
+                // }else{
+                //     $month = $month;
+                // }
+                // $years = date('Y',strtotime($year,strtotime('-1 Months')));
+
+                $schedule = $this->model_app->view_where('schedule',array('months'=>$month,'years'=>$years,'pegawai_id'=>$row->pegawai_id));
+                if($schedule->num_rows() > 0){
+                    $lastMonth = $this->db->query("SELECT coalesce(COUNT(a.id),0) as total  FROM schedule a  WHERE a.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='on' ")->row();
+                    $lastMonthResult = $this->db->query("SELECT coalesce(SUM(b.duration),0) as durasi, COUNT(b.id) as totalAbsen FROM schedule a JOIN absensi b ON a.id = b.schedule_id  WHERE b.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='on'")->row();
+                    $percentHours = round($lastMonthResult->durasi/($lastMonth->total*8)*100,1);
+                    $hours = $lastMonth->total*8;
+                    $terlambat = $this->db->query("SELECT coalesce(COUNT(b.id),0) as totalEarlyIn FROM schedule a JOIN absensi b ON a.id = b.schedule_id  WHERE b.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='on' AND early_in ='n' ")->row();
+                    if($terlambat->totalEarlyIn > 0){
+                        $percentTerlambat = round($terlambat->totalEarlyIn/$lastMonthResult->totalAbsen*100,0);
+                    
+                    }else{
+                        $percentTerlambat= 0;
+                    }
+                    $pulang = $this->db->query("SELECT coalesce(COUNT(b.id),0) as totalEarlyOut FROM schedule a JOIN absensi b ON a.id = b.schedule_id  WHERE b.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='on' AND early_out ='y' ")->row();
+                    if($pulang->totalEarlyOut > 0){
+                        $percentPulang = round($pulang->totalEarlyOut/$lastMonthResult->totalAbsen*100,0);
+                    
+                    }else{
+                        $percentPulang =0;
+                    
+                    }
+                    $percentHari = round($lastMonthResult->totalAbsen/$lastMonth->total*100,2);
+                    $off = $this->db->query("SELECT coalesce(COUNT(a.id),0) as total  FROM schedule a  WHERE a.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='off' ")->row();
+                    $cuti = $this->db->query("SELECT coalesce(COUNT(a.id),0) as total  FROM schedule a  WHERE a.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='dc' ")->row();
+
+                    $overtime = $this->db->query("SELECT COALESCE(SUM(overtime),0) as ovt FROM absensi a JOIN overtime b ON a.id = b.absensi_id WHERE a.pegawai_id = $row->pegawai_id AND MONTH(a.date) = '".$month."' AND YEAR(a.date) = '".$years."' ")->row();
+                    
+                  
+                    $data['row'] = $row;
+                    
+                    
+            
+                
+                    $data['lastMonth'] = $lastMonth;
+                    $data['lastMonthResult'] = $lastMonthResult;
+                    $data['percentHours'] = $percentHours;
+                    $data['hours'] = $hours;
+                    $data['terlambat'] = $terlambat;
+                    $data['percentTerlambat'] = $percentTerlambat;
+                    $data['pulang'] = $pulang;
+                    $data['percentPulang'] = $percentPulang;
+                    $data['percentHari'] = $percentHari;
+                    $data['off'] = $off;
+                    $data['cuti'] = $cuti;
+                    $data['overtime'] = $overtime;
+            
+                    $html = $this->load->view('hrd/gaji-pdf',$data,true);
+                    $filename = 'SLIP-GAJI-'.strtoupper(seo($row->name)).'-'.strtoupper(bulan($row->months)).'-'.$row->years;
+                    $paper = 'A4';
+                    $orientation = 'potrait';
+
+                    $attach = pdf_create($html, $filename, $paper, $orientation,true);
+
+                }else{
+                    $this->session->set_flashdata('error','Schedule gaji tidak ditemukan');
+                    redirect('gaji');
+                }
+                
+
+            }else{
+                $this->session->set_flashdata('error','Gaji tidak ditemukan');
+                redirect('gaji');
+            }
+        
         
     }
     public function detail(){

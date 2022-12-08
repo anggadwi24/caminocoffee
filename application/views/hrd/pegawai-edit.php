@@ -60,6 +60,27 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label class="col-form-label col-md-2">Jabatan </label>
+                        <div class="col-md-10">
+                                <div class="form-group form-focus select-focus">
+                                    <select class="select floating" name="position"> 
+                                        <option disabled selected>-</option>
+                                        <option value="barista" <?php if($row->position == 'barista'){echo "selected";}?>>Barista</option>
+                                        <option value="kitchen" <?php if($row->position == 'kitchen'){echo "selected";}?>>Kitchen</option>
+                                        <option value="leader" <?php if($row->position == 'leader'){echo "selected";}?>>Leader</option>
+                                        <option value="waitress" <?php if($row->position == 'waitress'){echo "selected";}?>>Waitress</option>
+
+                                     
+                                    
+                                    
+                                    </select>
+                                    <label class="focus-label">Pilih jabatan</label>
+                                </div>
+                            
+                            <div class="invalid-feedback d-block"><?= form_error('position') ?></div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <label class="col-form-label col-md-2">Foto </label>
                         <div class="col-md-10">
                             <input type="file" class="form-control" name="file" placeholder="Masukan foto" accept="image/*" >

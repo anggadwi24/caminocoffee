@@ -166,7 +166,11 @@
     $output .= '<div class="col-md-6">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Gaji '.bulan($bulan).'</h5>
+                            <div class="d-flex justify-content-between">
+                                 <h5 class="card-title mb-0">Gaji '.bulan($bulan).'</h5>
+                                 <a href="'.base_url('gaji/pdf?slip='.encode($row->id)).'" class="list-view btn btn-link"  title="Download PDF"><i class="fa fa-file-pdf-o"></i></a>
+                            </div>
+                            
                         </div>
                         <div class="card-body">
                            

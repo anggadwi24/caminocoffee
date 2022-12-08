@@ -108,7 +108,7 @@
                                 ?>
                                    
                                 </a>
-                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>" class="<?=$styles?>"><?= $row->name ?></a>
+                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>" class="<?=$styles?>"><?= $row->name ?> <span><?= ucfirst($row->position)?></span></a>
                             </h2>
                         </td>
                         <?php 
@@ -124,20 +124,25 @@
                                         $absen = $this->model_app->view_where('absensi',array('pegawai_id'=>$row->pegawai_id,'schedule_id'=>$sch->id));
                                         if($absen->num_rows() > 0){
                                             $abs = $absen->row();
-                                             echo '<td><a href="javascript:void(0);" class="detail '.$styles.'" data-absen="'.encode($abs->id).'" ><i class="fa fa-check text-success"></i></a></td>';
+                                             echo '<td><a href="javascript:void(0);" class="detail '.$styles.'" data-absen="'.encode($abs->id).'" ><i title="Absen" class="fa fa-check text-success"></i>';
+                                            $overtime = $this->model_app->view_where('overtime',array('absensi_id'=>$abs->id));
+                                            if($overtime->num_rows() > 0){
+                                                echo '<i class="fa fa-clock-o d-block text-primary" title="Overtime"></i>';
+                                            }
+                                             echo '</a></td>';
 
                                         }else{
-                                            echo '<td><i class="fa fa-times text-danger"></i></td>';
+                                            echo '<td><i class="fa fa-times text-danger" title="Tidak Absen"></i></td>';
 
                                         }
 
                                     }else{
-                                        echo '<td>-</td>';
+                                        echo '<td title="'.ucfirst($sch->status).'">-</td>';
                                     }
                                           
 
                                 }else{
-                                    echo '<td>-</td>';
+                                    echo '<td title="Tidak ada schedule">-</td>';
                                 }
                               }
                            

@@ -146,7 +146,7 @@ class Model_app extends CI_model{
         return $this->db->get();
     }
     public function getAbsensi($employee,$month,$year){
-        $this->db->select('absensi.id,pegawai.name,users.username,schedule_out,schedule_in,absensi.duration,absen_in,absen_out,absensi.date,early_out,early_in,pegawai.photo,shift.id as shift_id,schedule.id as schedule_id,pegawai.id as pegawai_id,users.id as users_id,shift.name as shift_name');
+        $this->db->select('absensi.id,pegawai.name,pegawai.position,users.username,schedule_out,schedule_in,absensi.duration,absen_in,absen_out,absensi.date,early_out,early_in,pegawai.photo,shift.id as shift_id,schedule.id as schedule_id,pegawai.id as pegawai_id,users.id as users_id,shift.name as shift_name');
         $this->db->from('absensi');
         $this->db->join('pegawai', 'absensi.pegawai_id=pegawai.id');
         $this->db->join('users', 'pegawai.users_id=users.id');
@@ -203,7 +203,7 @@ class Model_app extends CI_model{
         return $this->db->get();
     }
     public function getGajiPegawai($employee,$month,$year){
-        $this->db->select('slip.*,pegawai.name,pegawai.photo,users.username,pegawai.id as pegawai_id,users.level,users.active');
+        $this->db->select('slip.*,pegawai.name,pegawai.photo,pegawai.position,users.username,pegawai.id as pegawai_id,users.level,users.active');
         $this->db->from('slip');
         $this->db->join('pegawai', 'slip.pegawai_id=pegawai.id');
         $this->db->join('users', 'pegawai.users_id=users.id');
@@ -219,7 +219,7 @@ class Model_app extends CI_model{
         return $this->db->get();
     }
     public function getGajiPegawaiWhere($id){
-        $this->db->select('slip.*,pegawai.name,pegawai.photo,users.level,users.username,pegawai.id as pegawai_id');
+        $this->db->select('slip.*,pegawai.name,pegawai.photo,pegawai.position,users.level,users.username,pegawai.id as pegawai_id');
         $this->db->from('slip');
         $this->db->join('pegawai', 'slip.pegawai_id=pegawai.id');
         $this->db->join('users', 'pegawai.users_id=users.id');

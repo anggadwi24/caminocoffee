@@ -43,7 +43,7 @@
                             <div class="col-md-5">
                                 <div class="profile-info-left">
                                     <h3 class="user-name m-t-0 mb-0"><?= ucwords($row->name)?></h3>
-                                    <h6 class="text-muted"><?=strtoupper($row->level)?></h6>
+                                    <h6 class="text-muted"><?=strtoupper($row->position)?></h6>
                                     <small class="text-muted"><?php   if($row->active == 'y'){ echo "Active"; }else{echo "Suspend";} ?></small>
                                   
                                     <div class="small doj text-muted">Tanggal bergabung : <?= tanggal($row->created_at)?></div>
@@ -104,7 +104,12 @@
   $years = date('Y');
   $lastMonth = $this->db->query("SELECT coalesce(COUNT(a.id),0) as total  FROM schedule a  WHERE a.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='on' ")->row();
   $lastMonthResult = $this->db->query("SELECT coalesce(SUM(b.duration),0) as durasi, COUNT(b.id) as totalAbsen FROM schedule a JOIN absensi b ON a.id = b.schedule_id  WHERE b.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='on'")->row();
-  $percentHours = round($lastMonthResult->durasi/($lastMonth->total*8)*100,1);
+  if($lastMonthResult->durasi > 0){
+    $percentHours = round($lastMonthResult->durasi/($lastMonth->total*8)*100,1);
+
+  }else{
+    $percentHours = 0;
+  }
   $hours = $lastMonth->total*8;
   $terlambat = $this->db->query("SELECT coalesce(COUNT(b.id),0) as totalEarlyIn FROM schedule a JOIN absensi b ON a.id = b.schedule_id  WHERE b.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='on' AND early_in ='n' ")->row();
   if($terlambat->totalEarlyIn > 0){
@@ -121,7 +126,12 @@
       $percentPulang =0;
   
   }
-  $percentHari = round($lastMonthResult->totalAbsen/$lastMonth->total*100,2);
+  if($lastMonthResult->totalAbsen > 0){
+    $percentHari = round($lastMonthResult->totalAbsen/$lastMonth->total*100,2);
+
+  }else{
+    $percentHari = 0;
+  }
   $off = $this->db->query("SELECT coalesce(COUNT(a.id),0) as total  FROM schedule a  WHERE a.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='off' ")->row();
   $cuti = $this->db->query("SELECT coalesce(COUNT(a.id),0) as total  FROM schedule a  WHERE a.pegawai_id = $row->pegawai_id AND months = '".$month."' AND years = '".$years."' AND status ='dc' ")->row();
 
@@ -322,12 +332,34 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                        <label class="col-form-label col-md-3">Jabatan </label>
+                        <div class="col-md-9">
+                                <div class="form-group form-focus select-focus">
+                                    <select class="select floating" disabled> 
+                                        <option disabled selected>-</option>
+                                        <option value="barista" <?php if($row->position == 'barista'){echo "selected";}?>>Barista</option>
+                                        <option value="kitchen" <?php if($row->position == 'kitchen'){echo "selected";}?>>Kitchen</option>
+                                        <option value="leader" <?php if($row->position == 'leader'){echo "selected";}?>>Leader</option>
+                                        <option value="waitress" <?php if($row->position == 'waitress'){echo "selected";}?>>Waitress</option>
+
+                                     
+                                    
+                                    
+                                    </select>
+                                    <label class="focus-label">Pilih jabatan</label>
+                                </div>
+                            
+                            <div class="invalid-feedback d-block"><?= form_error('position') ?></div>
+                        </div>
+                    </div>
+                        <div class="form-group row">
                             <label class="col-form-label col-md-3">Foto </label>
                             <div class="col-md-9">
                                 <input type="file" class="form-control" name="file" placeholder="Masukan foto" accept="image/*" >
                                 <div class="invalid-feedback d-block">*Isi jika ingin mengganti</div>
                             </div>
                         </div>
+                        
                         <div class="form-group row">
                             <div class="col-12 text-right">
                                 <button class="btn btn-primary ">Simpan</button>

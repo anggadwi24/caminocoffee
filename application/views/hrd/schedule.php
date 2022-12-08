@@ -108,7 +108,7 @@
                                 ?>
                                    
                                 </a>
-                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>" class="<?=$styles?>"><?= $row->name ?></a>
+                                <a href="<?= base_url('pegawai/detail/'.$row->username) ?>" class="<?=$styles?>"><?= $row->name ?><small class="d-block text-muted"><?= ucfirst($row->position)?></small></a>
                             </h2>
                         </td>
                         <?php 

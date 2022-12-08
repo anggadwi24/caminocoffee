@@ -56,7 +56,7 @@
                             <div class="col-md-5">
                                 <div class="profile-info-left">
                                     <h3 class="user-name m-t-0 mb-0"><?= ucwords($row->name)?></h3>
-                                    <h6 class="text-muted">Pegawai</h6>
+                                    <h6 class="text-muted"><?= ucfirst($row->position)?></h6>
                                     <small class="text-muted"><?php   if($row->active == 'y'){ echo "Active"; }else{echo "Suspend";} ?></small>
                                     
                                     <div class="small doj text-muted">Tanggal bergabung : <?= tanggal($row->created_at)?></div>
